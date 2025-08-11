@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>vanessaszwaczka — Bio</title>
+  <meta name="description" content="Oficjalna bio strona streamerki vanessaszwaczka — stream, chat, social media, radyjko, Kick i exclusive content (18+)." />
+  <meta property="og:image" content="https://i.imgur.com/eDYyA4G.png" />
+  <meta property="og:image:width" content="1024" />
+  <meta property="og:image:height" content="1024" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --violet:#9b8cff; --lav:#c5b8ff; --pink:#ffb7db; --peach:#ffd6c3; --mint:#c9ffe7;
+      --accent: var(--violet); --accent-2:#7a6aff; --text:#fff8ff; --muted:#cbbfd6;
+      --card:rgba(72,58,112,0.35); --card-strong:rgba(47,38,78,0.72);
+      --glass: blur(12px) saturate(120%); --radius:20px; --maxw:1200px;
+      --shadow-neon:0 0 12px var(--lav), 0 0 28px color-mix(in srgb, var(--lav) 60%, transparent);
+      --glow-strong:0 0 18px var(--lav), 0 0 48px var(--lav);
+      --live-red:#ff5a8a; --offline:#9aa0a8;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%}
+    body{
+      font-family:Nunito,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 70% 10%, rgba(255,255,255,.08), transparent 60%),
+        radial-gradient(900px 700px at 10% 30%, rgba(155,140,255,.18), transparent 60%),
+        linear-gradient(180deg, #2a2246, #1c1732 60%, #17122b) fixed;
+      overflow-x:hidden;
+    }
+    body::before{
+      content:""; position:fixed; inset:0; pointer-events:none; z-index:-1;
+      background:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.9) 98%, transparent) repeat,
+        radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,.8) 98%, transparent) repeat,
+        radial-gradient(1.2px 1.2px at 60% 70%, rgba(255,255,255,.7) 98%, transparent) repeat,
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><g fill="%23c5b8ff" fill-opacity=".45"><path d="M60 8l6 16 17 5-17 6-6 17-6-17-17-6 17-5z"/><circle cx="100" cy="20" r="2"/><circle cx="18" cy="86" r="2.5"/></g></svg>') repeat;
+      background-size:120px 120px,160px 160px,200px 200px,260px 260px;
+      mix-blend-mode:screen; opacity:.6;
+    }
+    a{color:inherit;text-decoration:none}
+
+    /* TICKER */
+    .ticker{position:sticky;top:0;z-index:50;backdrop-filter:var(--glass);
+      background:linear-gradient(90deg,rgba(55,42,92,.85),rgba(55,42,92,.65));
+      border-bottom:1px solid rgba(197,184,255,.45);
+      box-shadow:0 1px 0 rgba(197,184,255,.25); min-height:56px;display:flex;align-items:center;gap:14px}
+    .ticker .label{margin-left:12px; font-weight:900; letter-spacing:.14em; font-size:12px; color:#fff; text-shadow: 0 0 12px var(--lav); display:flex; flex-direction:column; align-items:flex-start; line-height:1}
+    .liveBadge{margin-top:4px; font-size:12px; font-weight:800; display:flex; align-items:center; gap:8px}
+    .liveBadge .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+    .liveBadge.on{color:var(--live-red)} .liveBadge.on .dot{background:var(--live-red); box-shadow:0 0 10px var(--live-red),0 0 20px var(--live-red); animation:blink 1s infinite}
+    .liveBadge.off{color:var(--offline)} .liveBadge.off .dot{background:var(--offline)}
+    @keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+    .ticker .mask{overflow:hidden; flex:1}
+    .ticker .track{display:flex; width:max-content; animation: marquee2 26s linear infinite}
+    .ticker .row{display:flex; gap:20px; padding:0 12px}
+    .ticker .item{opacity:.98; background: rgba(73,58,112,.55); padding:7px 14px; border-radius:999px; border:1px solid rgba(197,184,255,.35); box-shadow:0 2px 12px rgba(155,140,255,.25)}
+    @keyframes marquee2{ from{ transform: translateX(0)} to{ transform: translateX(-50%)} }
+
+    main{max-width:var(--maxw); margin:56px auto 140px; padding:0 18px}
+
+    /* LOGO */
+    .logo{margin:48px auto 22px; text-align:center; position:relative; user-select:none}
+    .logo h1{font-family: Pacifico, Nunito, sans-serif; font-size: clamp(40px, 8vw, 82px); font-weight: 400; letter-spacing: .03em; color:#fff; text-shadow: var(--glow-strong); filter: drop-shadow(0 6px 18px rgba(197,184,255,.35));}
+    .sparkles{position:absolute; inset:0; pointer-events:none}
+    .sparkles i{position:absolute; width:7px; height:7px; background: var(--lav); border-radius:50%; box-shadow:0 0 10px var(--lav), 0 0 20px var(--lav); animation: twinkle 2.8s ease-in-out infinite; opacity:.9}
+    @keyframes twinkle{ 0%,100%{transform:scale(.6) rotate(0)} 50%{transform:scale(1.25) rotate(15deg)} }
+
+    /* SOCIALS */
+    .socials{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin:20px 0 42px}
+    .chip{display:inline-flex; align-items:center; gap:10px; padding:10px 14px; border-radius:999px; border:1px solid rgba(197,184,255,.35); background: linear-gradient(180deg, rgba(80,64,130,.55), rgba(80,64,130,.35)); backdrop-filter: var(--glass); transition:.2s transform, .2s box-shadow}
+    .chip:hover{transform:translateY(-1px) scale(1.04); box-shadow: var(--shadow-neon)}
+    .chip img{width:18px; height:18px; object-fit:contain}
+
+    /* CARDS / GRID */
+    .card{background:var(--card); border:1px solid rgba(197,184,255,.28); border-radius:var(--radius); box-shadow:0 12px 40px rgba(13,8,26,.45); backdrop-filter:var(--glass); overflow:hidden}
+    .section{margin:42px 0}
+    .zone{display:inline-block; margin:28px 0 10px; text-align:left; font-size:12px; font-weight:900; letter-spacing:.22em; color:#fff4ff; padding:7px 12px; border:1px solid rgba(197,184,255,.5); border-radius:999px; background: linear-gradient(180deg, rgba(70,54,120,.7), rgba(70,54,120,.45)); box-shadow:0 0 14px rgba(197,184,255,.25)}
+    .zone::before{content:"✦"; display:inline-block; margin-right:8px; color:var(--pink); text-shadow:0 0 10px var(--pink)}
+
+    /* STREAM + CHAT */
+    .grid{display:grid; gap:24px}
+    @media(min-width: 980px){ .grid.stream{grid-template-columns: 1.7fr 1fr} }
+    .frame{aspect-ratio:16/9; width:100%; border-radius:calc(var(--radius) - 2px); border:2px solid rgba(197,184,255,.55); box-shadow: var(--shadow-neon); overflow:hidden; background: #000}
+    .frame iframe{display:block; width:100%; height:100%; border:0}
+
+    /* mini DONATE */
+    .mini-donate{text-align:center; padding:12px; background:linear-gradient(180deg, rgba(70,54,120,.55), rgba(70,54,120,.35)); border-top:1px solid rgba(197,184,255,.28)}
+    .mini-btn{display:inline-block; font-size:14px; padding:10px 18px; border-radius:14px; background: rgba(82,66,130,.6); border:1px solid rgba(197,184,255,.55); color:var(--text); text-decoration:none; letter-spacing:.04em; font-weight:800; box-shadow: 0 0 8px rgba(155,140,255,.25); transition:.18s transform, .18s box-shadow}
+    .mini-btn:hover{ transform:translateY(-1px) scale(1.03); box-shadow: var(--shadow-neon); }
+    .pay-note{font-size:12px; color:var(--muted); margin-top:6px; line-height:1.4}
+
+    .chat-note{ font-size:11px; color:var(--muted); margin-top:-16px; margin-bottom:10px; }
+    @media(min-width:980px){ .chat-note{ grid-column:2; text-align:left; padding-left:4px; } }
+    @media(max-width:979px){ .chat-note{ margin-top:8px; margin-bottom:6px; font-size:10.5px } }
+
+    /* RADIO */
+    .radio{display:flex; align-items:center; gap:16px; padding:14px}
+    .radio .cover{width:56px; height:56px; border-radius:12px; background:#2f2851; border:1px solid rgba(197,184,255,.35); overflow:hidden; flex:0 0 auto}
+    .radio .meta{flex:1; min-width:0}
+    .radio h3{margin:0 0 4px; font-size:18px}
+    .radio .marquee{font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; position:relative}
+    .radio .marquee span{display:inline-block; padding-left:100%; animation: marquee 14s linear infinite}
+    @keyframes marquee{from{transform:translateX(0)} to{transform:translateX(-100%)} }
+    .radio .controls{display:flex; gap:10px}
+    .btn{display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:50%; border:2px solid rgba(197,184,255,.55); box-shadow: var(--shadow-neon); background: rgba(64,50,108,.6); cursor:pointer; transition:.2s transform}
+    .btn:hover{transform: scale(1.1)}
+    .btn svg{width:20px; height:20px; fill:var(--lav)}
+
+    /* EXCLUSIVE CONTENT (18+) */
+    .gallery{display:grid; gap:16px}
+    @media(min-width:760px){ .gallery{grid-template-columns: repeat(3, 1fr)} }
+    @media(min-width:1100px){ .gallery{grid-template-columns: repeat(4, 1fr)} }
+    .tile{position:relative; border-radius:16px; overflow:hidden; border:1px solid rgba(197,184,255,.35); background:linear-gradient(180deg, rgba(80,64,130,.5), rgba(70,54,120,.35)); aspect-ratio:1/1; display:block}
+    .tile img{width:100%; height:100%; object-fit:cover; display:block; filter: blur(14px) saturate(75%); transform: scale(1.05)}
+    .tile .veil{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px; backdrop-filter: blur(2px); background:linear-gradient(180deg, rgba(24,18,40,.45), rgba(24,18,40,.65)); color:#fff}
+    .tile .veil .cta{display:inline-flex; align-items:center; gap:10px; padding:10px 14px; border-radius:999px; border:1px solid rgba(197,184,255,.6); background: rgba(82,66,130,.5); font-weight:800}
+    .badge18{position:absolute; top:10px; left:10px; font-size:11px; font-weight:900; letter-spacing:.12em; padding:6px 8px; border-radius:999px; border:1px solid rgba(255,110,140,.65); background:rgba(255,110,140,.25); color:#fff; box-shadow:0 0 0 2px rgba(255,110,140,.15)}
+    .gate{display:flex; gap:12px; align-items:center; justify-content:center; padding:12px; font-size:13px; color:#ffeef7}
+    .gate .btn-ok{border:1.5px solid rgba(197,184,255,.8); padding:8px 12px; border-radius:999px; background:rgba(82,66,130,.5); font-weight:800; cursor:pointer}
+    .gate .btn-no{border:none; background:transparent; color:#ffb7db; text-decoration:underline; cursor:pointer}
+
+    /* CONTACT + FOOTER */
+    .contact{font-size:12px; color:var(--muted); text-align:center; line-height:1.8}
+    .powered{margin-top:16px; position:relative; overflow:hidden; border-radius:var(--radius); text-align:center; padding:14px; font-size:12px; color:#fff; background: linear-gradient(180deg, rgba(70,54,120,.6), rgba(47,38,78,.75)); border:1px solid rgba(197,184,255,.35)}
+    .powered::after{content:""; position:absolute; inset:0; background: linear-gradient(90deg, transparent, rgba(197,184,255,.5), transparent); transform: translateX(-100%); animation: scan 4.5s infinite}
+    @keyframes scan{ 0%{ transform: translateX(-100%)} 60%{ transform: translateX(100%)} 100%{ transform: translateX(100%)} }
+
+    /* SPLASH + TOAST + REVEAL */
+    .splash{position: fixed; inset:0; display:grid; place-items:center; background: radial-gradient(800px 600px at 50% 20%, rgba(197,184,255,.12), transparent 60%), #1b1432; color: #fff; z-index:100}
+    .splash .inner{ text-align:center}
+    .enter{ margin-top:20px; padding:14px 22px; border-radius:999px; border:2px solid rgba(197,184,255,.65); background: transparent; color:#fff; font-weight:700; letter-spacing:.06em; cursor:pointer; box-shadow: var(--shadow-neon)}
+    .enter:hover{ filter: drop-shadow(0 0 16px rgba(197,184,255,.9))}
+    .no-scroll{overflow:hidden;height:100%}
+
+    .toast{position: fixed; bottom:22px; right:22px; background: var(--card-strong); color:var(--text); border:1px solid rgba(197,184,255,.35); padding:12px 14px; border-radius:14px; box-shadow: 0 10px 30px rgba(0,0,0,.4); display:flex; gap:10px; align-items:flex-start; max-width: 360px; z-index:40}
+    .toast button{margin-left:auto; background:transparent; border:none; color:var(--muted); cursor:pointer; font-weight:700}
+
+    .reveal{opacity:0; transform: translateY(16px); transition: .6s ease}
+    .reveal.visible{opacity:1; transform:none}
+
+    /* KICK — używa .card i .frame */
+
+    @media(max-width: 980px){ .grid.stream{ grid-template-columns: 1fr; } .chat-note{ grid-column:auto; } }
+    @media(max-width: 600px){
+      main{margin:40px auto 90px; padding:0 14px}
+      .logo h1{font-size: clamp(34px, 9vw, 56px)}
+      .zone{font-size:11px; letter-spacing:.18em}
+      .section{margin:30px 0}
+      .chip{padding:9px 12px}
+      .radio{gap:12px; align-items:flex-start}
+      .radio .cover{width:44px; height:44px}
+      .radio h3{font-size:16px}
+      .radio .marquee{font-size:12px}
+      .toast{max-width:calc(100% - 32px)}
+    }
+  </style>
+</head>
+<body class="no-scroll">
+  <!-- SPLASH -->
+  <div id="splash" class="splash">
+    <div class="inner">
+      <div class="logo" style="margin:0">
+        <h1 id="logoText">vanessaszwaczka</h1>
+      </div>
+      <div style="opacity:.85">kliknij, aby wejść</div>
+      <button id="enterBtn" class="enter">WEJDŹ</button>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="label">
+      <div>NEWS</div>
+      <div id="liveBadge" class="liveBadge off"><span class="dot"></span> OFFLINE</div>
+    </div>
+    <div class="mask">
+      <div id="tickerTrack" class="track">
+        <div id="tickerFeedA" class="row" aria-hidden="false"></div>
+        <div id="tickerFeedB" class="row" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <!-- LOGO -->
+    <div class="logo reveal">
+      <h1 id="mainLogo">vanessaszwaczka</h1>
+      <div class="sparkles" id="sparkles"></div>
+    </div>
+
+    <!-- SOCIALS -->
+    <div id="socials" class="socials reveal"></div>
+
+    <!-- STREAM + CHAT -->
+    <h2 class="zone reveal">STREFA STREAM</h2>
+    <section class="section grid stream reveal">
+      <div class="card">
+        <div class="frame">
+          <iframe id="twitch-embed" allowfullscreen frameborder="0"></iframe>
+        </div>
+        <div class="mini-donate">
+          <a href="https://streamelements.com/vanessaszwaczka/tip" target="_blank" rel="noopener" class="mini-btn">🎀 Donate — StreamElements</a>
+          <div class="pay-note">Formy płatności: karty, Paysafecard, PayPal.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="frame" style="aspect-ratio:auto; height:100%">
+          <iframe id="twitch-chat" frameborder="0"></iframe>
+        </div>
+      </div>
+      <div class="chat-note">Aby pisać na czacie, zaloguj się na <a href="https://www.twitch.tv/" target="_blank" rel="noopener">Twitch.tv</a>.</div>
+    </section>
+
+    <!-- RADIO -->
+    <h2 class="zone reveal">RADYJKO</h2>
+    <section class="section card reveal">
+      <div class="radio">
+        <div class="cover"><img id="radioCover" src="https://i.imgur.com/IGjyCAy.png" alt="okładka" style="width:100%;height:100%"></div>
+        <div class="meta">
+          <h3 id="radioTitle">Radyjko</h3>
+          <div class="marquee"><span id="radioInfo">— lo-fi / synth-pop / chill —</span></div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="playPause" aria-label="Odtwarzaj/Pauza">
+            <svg viewBox="0 0 24 24"><path id="playIcon" d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button class="btn" id="mute" aria-label="Wycisz">
+            <svg viewBox="0 0 24 24"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 0 1-2.1 3.8l1.4 1.4A6.5 6.5 0 0 0 19.5 12 6.5 6.5 0 0 0 15.8 6.8l-1.4 1.4A4.5 4.5 0 0 1 16.5 12z"/></svg>
+          </button>
+        </div>
+        <audio id="audio" preload="none"></audio>
+      </div>
+    </section>
+
+    <!-- KICK (pod Radyjko) -->
+    <h2 class="zone reveal">STREFA KICK</h2>
+    <section class="section grid reveal">
+      <div class="card">
+        <div class="frame">
+          <iframe id="kick-embed" src="https://player.kick.com/vanessaszwaczka" allowfullscreen frameborder="0"></iframe>
+        </div>
+      </div>
+      <div class="card" style="display:flex;align-items:center;justify-content:center;padding:18px">
+        <a class="mini-btn" href="https://kick.com/vanessaszwaczka" target="_blank" rel="noopener">Odwiedź profil na Kick</a>
+      </div>
+    </section>
+
+    <!-- EXCLUSIVE CONTENT (18+) -->
+    <h2 class="zone reveal">STREFA EXCLUSIVE CONTENT (18+)</h2>
+    <section class="section card reveal" style="padding:16px 18px">
+      <!-- Age gate -->
+      <div id="gate" class="gate">
+        <span>Ta sekcja zawiera treści dla dorosłych (18+).</span>
+        <button id="gateOk" class="btn-ok">Jestem 18+</button>
+        <button id="gateNo" class="btn-no">Wróć</button>
+      </div>
+
+      <!-- CTA do OF -->
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:center; margin:8px 0 14px">
+        <a class="mini-btn" href="https://onlyfans.com/vanessaszwaczka" target="_blank" rel="noopener">Zobacz pełne treści na OnlyFans</a>
+        <span style="font-size:12px; color:var(--muted)">@vanessaszwaczka</span>
+      </div>
+
+      <!-- Galeria -->
+      <div id="gallery" class="gallery" style="display:none"></div>
+
+      <!-- Info -->
+      <div style="text-align:center; font-size:12px; color:var(--muted); margin-top:12px">
+        Podglądy są zablokowane i rozmyte. Pełne zdjęcia i filmy dostępne po zalogowaniu na OnlyFans.
+      </div>
+    </section>
+
+    <!-- KONTAKT + POWERED -->
+    <section class="section card reveal" style="padding:16px 18px">
+      <div class="contact">
+        <div style="font-weight:800; color:#fff; letter-spacing:.12em; margin-bottom:6px">kontakt</div>
+        <div>- discord: <a id="contactDiscord" href="#" target="_blank" rel="noopener"></a></div>
+      </div>
+      <div class="powered">
+        Powered by <a href="https://snyuzii.xyz" target="_blank" rel="noopener"><strong>snyuzii.xyz</strong></a>
+      </div>
+    </section>
+  </main>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast" hidden>
+    <div><strong>Hejka!</strong> witaj na mojej bio stronce znajdziesz tutaj trochę informacji o mnie :) 💜🦈</div>
+    <button id="closeToast">×</button>
+  </div>
+
+  <script>
+    // ---------- CONFIG ----------
+    const CONFIG = {
+      logoText: 'vanessaszwaczka',
+      news: [
+        'Nowe streamy na Twitch: @vanessaszwaczka',
+        'Dołącz do Discorda ♥',
+        'Follow na Instagramie i TikToku',
+        'Kick: kick.com/vanessaszwaczka'
+      ],
+      socials: [
+        {label:'Twitch',   icon:'https://simpleicons.org/icons/twitch.svg',   url:'https://www.twitch.tv/vanessaszwaczka'},
+        {label:'Instagram',icon:'https://simpleicons.org/icons/instagram.svg',url:'https://www.instagram.com/vanessaszwaczka/'},
+        {label:'TikTok',   icon:'https://simpleicons.org/icons/tiktok.svg',   url:'https://www.tiktok.com/@vanessaszwaczka'},
+        {label:'Kick',     icon:'https://simpleicons.org/icons/kick.svg',     url:'https://kick.com/vanessaszwaczka'},
+        {label:'Discord',  icon:'https://simpleicons.org/icons/discord.svg',  url:'https://discord.gg/Es3P7Quwpq'}
+      ],
+      radio: { streamUrl:'https://stream.nightride.fm/nightride.mp3', cover:'https://i.imgur.com/IGjyCAy.png', title:'Radyjko', info:'Chill vibes — lo-fi / synth-pop / j-pop' },
+      contact:{ discord:'discord.gg/Es3P7Quwpq' },
+      showWelcomeToast:true, sparkleCount:22,
+      /* Twitch EMBED: parent ustawiony na vanessa.snyuzii.xyz */
+      twitchParents:['vanessa.snyuzii.xyz'],
+      twitch:{ channelLogin:'vanessaszwaczka' },
+
+      /* EXCLUSIVE CONTENT placeholders – podmień src na swoje (SFW) miniatury */
+      exclusive: [
+        { title:'Post #1', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23c5b8ff\'/><stop offset=\'100%\' stop-color=\'%23ffb7db\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.9\'><circle cx=\'150\' cy=\'160\' r=\'14\'/><circle cx=\'200\' cy=\'200\' r=\'10\'/><path d=\'M400 220 l16 40 44 12 -44 16 -16 44 -16 -44 -44 -16 44 -12z\'/></g></svg>'},
+        { title:'Post #2', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23ffd6c3\'/><stop offset=\'100%\' stop-color=\'%23c5b8ff\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.85\'><path d=\'M400 160 l10 30 32 8 -32 12 -10 30 -10 -30 -32 -12 32 -8z\'/><circle cx=\'560\' cy=\'540\' r=\'8\'/><circle cx=\'520\' cy=\'500\' r=\'12\'/></g></svg>'},
+        { title:'Post #3', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23c9ffe7\'/><stop offset=\'100%\' stop-color=\'%23ffb7db\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.9\'><circle cx=\'620\' cy=\'180\' r=\'10\'/><path d=\'M300 400 l16 40 44 12 -44 16 -16 44 -16 -44 -44 -16 44 -12z\'/></g></svg>'},
+        { title:'Post #4', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%239b8cff\'/><stop offset=\'100%\' stop-color=\'%23ffd6c3\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.9\'><circle cx=\'160\' cy=\'620\' r=\'12\'/><circle cx=\'200\' cy=\'580\' r=\'9\'/><path d=\'M600 300 l14 36 36 10 -36 14 -14 36 -14 -36 -36 -14 36 -10z\'/></g></svg>'},
+        { title:'Post #5', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23ffb7db\'/><stop offset=\'100%\' stop-color=\'%23c9ffe7\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.9\'><path d=\'M420 200 l12 32 34 10 -34 12 -12 34 -12 -34 -34 -12 34 -10z\'/></g></svg>'},
+        { title:'Post #6', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23c5b8ff\'/><stop offset=\'100%\' stop-color=\'%239b8cff\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.9\'><circle cx=\'300\' cy=\'300\' r=\'12\'/><path d=\'M520 520 l14 36 36 10 -36 14 -14 36 -14 -36 -36 -14 36 -10z\'/></g></svg>'}
+      ]
+    };
+
+    // ---------- INIT UI ----------
+    const mainLogo = document.getElementById('mainLogo');
+    const logoText = document.getElementById('logoText');
+    mainLogo.textContent = CONFIG.logoText; logoText.textContent = CONFIG.logoText;
+
+    // ticker
+    const feedA = document.getElementById('tickerFeedA');
+    const feedB = document.getElementById('tickerFeedB');
+    const tickerHtml = CONFIG.news.map(t=>`<div class="item">${t}</div>`).join('');
+    feedA.innerHTML = tickerHtml; feedB.innerHTML = tickerHtml;
+
+    // socials
+    document.getElementById('socials').innerHTML = CONFIG.socials.map(s=>
+      `<a class="chip" href="${s.url}" target="_blank" rel="noopener">
+        <img src="${s.icon}" alt="${s.label}"/><span>${s.label}</span>
+      </a>`).join('');
+
+    // Twitch embed + chat (parent = vanessa.snyuzii.xyz)
+    const parentsParam = CONFIG.twitchParents.map(encodeURIComponent).map(p=>`parent=${p}`).join('&');
+    document.getElementById('twitch-embed').src =
+      `https://player.twitch.tv/?channel=${encodeURIComponent(CONFIG.twitch.channelLogin)}&${parentsParam}&muted=true`;
+    document.getElementById('twitch-chat').src =
+      `https://www.twitch.tv/embed/${encodeURIComponent(CONFIG.twitch.channelLogin)}/chat?${parentsParam}&darkpopout`;
+
+    // sparkles near logo
+    const sparkWrap = document.getElementById('sparkles');
+    for(let i=0;i<CONFIG.sparkleCount;i++){
+      const s = document.createElement('i');
+      s.style.left = Math.random()*100 + '%';
+      s.style.top = (Math.random()*70 + 10) + '%';
+      s.style.animationDelay = (Math.random()*2)+'s';
+      s.style.width = s.style.height = (5 + Math.random()*6) + 'px';
+      s.style.boxShadow = `0 0 ${6 + Math.random()*12}px var(--lav), 0 0 ${16 + Math.random()*28}px var(--lav)`;
+      sparkWrap.appendChild(s);
+    }
+
+    // RADIO
+    const audio = document.getElementById('audio');
+    document.getElementById('radioTitle').textContent = CONFIG.radio.title;
+    document.getElementById('radioInfo').textContent = CONFIG.radio.info;
+    document.getElementById('radioCover').src = CONFIG.radio.cover;
+    audio.src = CONFIG.radio.streamUrl;
+
+    // Splash
+    const splash = document.getElementById('splash');
+    document.getElementById('enterBtn').addEventListener('click', async () => {
+      splash.style.opacity = '0';
+      setTimeout(()=> splash.remove(), 320);
+      document.body.classList.remove('no-scroll');
+      try{ await audio.play(); }catch(e){}
+    });
+
+    // Radio controls
+    const playBtn = document.getElementById('playPause');
+    const muteBtn = document.getElementById('mute');
+    const playIcon = document.getElementById('playIcon');
+    let playing = false;
+    const setPlayIcon=()=>playIcon.setAttribute('d', playing ? 'M6 5h4v14H6zm8 0h4v14h-4z' : 'M8 5v14l11-7z');
+    playBtn.addEventListener('click', async()=>{ if(!playing){ await audio.play(); playing = true; } else { audio.pause(); playing = false; } setPlayIcon(); });
+    muteBtn.addEventListener('click', ()=>{ audio.muted = !audio.muted; muteBtn.style.opacity = audio.muted? .6 : 1; });
+    audio.addEventListener('play', ()=>{ playing=true; setPlayIcon(); });
+    audio.addEventListener('pause', ()=>{ playing=false; setPlayIcon(); });
+
+    // Reveal
+    const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target);} });},{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+    // Toast
+    const toast = document.getElementById('toast'), closeToast = document.getElementById('closeToast');
+    if(CONFIG.showWelcomeToast && !sessionStorage.getItem('toastSeen')){
+      toast.hidden = false; closeToast.onclick = () => { toast.remove(); sessionStorage.setItem('toastSeen','1'); };
+    }
+
+    // ---------- Exclusive Content (18+) ----------
+    const gate = document.getElementById('gate');
+    const gallery = document.getElementById('gallery');
+    const gateOk = document.getElementById('gateOk');
+    const gateNo = document.getElementById('gateNo');
+
+    function buildGallery(){
+      gallery.innerHTML = CONFIG.exclusive.map((it)=>`
+        <a class="tile" href="${it.href}" target="_blank" rel="noopener" aria-label="${it.title} — OnlyFans (18+)">
+          <span class="badge18">18+</span>
+          <img loading="lazy" src="${it.src}" alt="${it.title} — podgląd rozmyty"/>
+          <div class="veil">
+            <div>
+              <div style="font-weight:900;letter-spacing:.06em;margin-bottom:8px">${it.title}</div>
+              <div class="cta">Zobacz na OnlyFans (18+)</div>
+            </div>
+          </div>
+        </a>`).join('');
+    }
+
+    // Age gate (sesja przeglądarki)
+    const ok = sessionStorage.getItem('of_age_ok') === '1';
+    if(ok){ gate.style.display='none'; gallery.style.display='grid'; buildGallery(); }
+
+    gateOk.addEventListener('click', ()=>{
+      sessionStorage.setItem('of_age_ok','1');
+      gate.style.display='none';
+      buildGallery();
+      gallery.style.display='grid';
+    });
+    gateNo.addEventListener('click', ()=>{ window.scrollTo({top:0, behavior:'smooth'}); });
+
+    // CONTACT
+    const disc = document.getElementById('contactDiscord');
+    disc.textContent = CONFIG.contact.discord; disc.href = 'https://' + CONFIG.contact.discord;
+
+    // LIVE badge placeholder (bez Helix sekreta)
+    (function(){
+      const badge = document.getElementById('liveBadge');
+      badge.className='liveBadge off'; badge.innerHTML='<span class="dot"></span> OFFLINE';
+    })();
+  </script>
+</body>
+</html>
