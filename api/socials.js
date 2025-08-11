@@ -1,67 +1,25 @@
-// /api/socials.js
 export default async function handler(req, res) {
-  const URL = process.env.KV_REST_API_URL;
-  const TOKEN = process.env.KV_REST_API_TOKEN; // pełny token (nie read-only)
-  const ADMIN = process.env.ADMIN_PIN_HASH;
-  const KEY = 'socials_v1';
+  const KV_REST_API_URL = "WSTAW_TUTAJ_SWÓJ_KV_REST_API_URL";
+  const KV_REST_API_TOKEN = "WSTAW_TUTAJ_SWÓJ_KV_REST_API_TOKEN";
 
-  if (!URL || !TOKEN) {
-    return res.status(500).json({ ok: false, error: 'KV env missing' });
-  }
-
-  // helper do czytania i zawsze zwracania tablicy
-  async function readItems() {
-    const r = await fetch(`${URL}/get/${KEY}`, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      cache: 'no-store'
+  if (req.method === "GET") {
+    const response = await fetch(`${KV_REST_API_URL}/get/socials`, {
+      headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` }
     });
-    const j = await r.json();
-    if (!j.result) return [];
-    // j.result to string przechowywany w KV -> parsujemy raz
-    let parsed = j.result;
-    try { parsed = JSON.parse(j.result); } catch {}
-    // jeśli parsed też jest stringiem (podwójne z-serializowanie) -> parsujemy drugi raz
-    if (typeof parsed === 'string') {
-      try { parsed = JSON.parse(parsed); } catch {}
-    }
-    return Array.isArray(parsed) ? parsed : [];
+    const data = await response.json();
+    res.status(200).json(data ? JSON.parse(data.result) : { items: [] });
   }
 
-  if (req.method === 'GET') {
-    try {
-      const items = await readItems();
-      return res.status(200).json({ ok: true, items });
-    } catch (e) {
-      return res.status(500).json({ ok: false, error: String(e) });
-    }
+  if (req.method === "POST") {
+    const body = req.body;
+    await fetch(`${KV_REST_API_URL}/set/socials`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${KV_REST_API_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ value: JSON.stringify(body) })
+    });
+    res.status(200).json({ ok: true });
   }
-
-  if (req.method === 'POST') {
-    try {
-      const { socials, pinHash } = req.body || {};
-      if (!Array.isArray(socials)) return res.status(400).json({ ok: false, error: 'bad socials' });
-      if (!ADMIN || pinHash !== ADMIN) return res.status(401).json({ ok: false, error: 'unauthorized' });
-
-      // zapisujemy JEDEN raz zserializowaną tablicę
-      const payload = JSON.stringify(socials);
-      const r = await fetch(`${URL}/set/${KEY}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ value: payload })
-      });
-      if (!r.ok) {
-        const txt = await r.text().catch(()=> '');
-        throw new Error('kv set failed: ' + txt);
-      }
-      return res.status(200).json({ ok: true });
-    } catch (e) {
-      return res.status(500).json({ ok: false, error: String(e) });
-    }
-  }
-
-  res.setHeader('Allow', ['GET', 'POST']);
-  res.status(405).end('Method Not Allowed');
 }
