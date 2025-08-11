@@ -1,24 +1,49 @@
+// api/stats-reset.js
+import crypto from 'crypto';
+
 export default async function handler(req, res) {
-  const KV_REST_API_URL = "https://eager-eft-54703.upstash.io";
-  const KV_REST_API_TOKEN = "AdWvAAIjcDE1YzY4Y2EyZDJmNmM0YmUxOWJjMDdhNTVjODkxMzk0MnAxMA";
+  const base = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  const adminPinHash = process.env.ADMIN_PIN_HASH;
+  if (!base || !token || !adminPinHash) return res.status(500).json({ error: 'env missing' });
 
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).end();
   }
 
-  const socialsResponse = await fetch(`${KV_REST_API_URL}/get/socials`, {
-    headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` }
-  });
-  const socialsData = await socialsResponse.json();
-  const socials = socialsData.result ? JSON.parse(socialsData.result).items : [];
+  try {
+    const { pin } = req.body || {};
+    const pinHash = crypto.createHash('sha256').update(String(pin || '')).digest('hex');
+    if (pinHash !== adminPinHash) return res.status(401).json({ error: 'unauthorized' });
 
-  for (const social of socials) {
-    const key = `clicks:${social.label}`;
-    await fetch(`${KV_REST_API_URL}/del/${key}`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` }
+    // Pobierz wszystkie klucze z licznikami
+    const kr = await fetch(`${base}/keys/${encodeURIComponent('clicks:*')}`, {
+      headers: { Authorization: `Bearer ${token}` }
     });
-  }
+    const kj = await kr.json();
+    const keys = Array.isArray(kj?.result) ? kj.result : [];
 
-  res.status(200).json({ ok: true, message: "Statystyki wyzerowane" });
+    // Usuń je po kolei (Upstash REST nie ma batch DEL)
+    for (const k of keys) {
+      await fetch(`${base}/del/${encodeURIComponent(k)}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    }
+
+    // (opcjonalnie) zapisz timestamp ostatniego resetu
+    await fetch(`${base}/set/stats:lastReset`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(new Date().toISOString())
+    });
+
+    return res.status(200).json({ ok: true, removed: keys.length });
+  } catch (e) {
+    res.status(500).json({ error: String(e?.message || e) });
+  }
 }
