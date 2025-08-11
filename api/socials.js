@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
-  const KV_REST_API_URL = "WSTAW_TUTAJ_SWÓJ_KV_REST_API_URL";
-  const KV_REST_API_TOKEN = "WSTAW_TUTAJ_SWÓJ_KV_REST_API_TOKEN";
+  const KV_REST_API_URL = "https://eager-eft-54703.upstash.io";
+  const KV_REST_API_TOKEN = "AdWvAAIjcDE1YzY4Y2EyZDJmNmM0YmUxOWJjMDdhNTVjODkxMzk0MnAxMA";
 
   if (req.method === "GET") {
     const response = await fetch(`${KV_REST_API_URL}/get/socials`, {
@@ -23,3 +23,4 @@ export default async function handler(req, res) {
     res.status(200).json({ ok: true });
   }
 }
+
