@@ -17,7 +17,6 @@
       --glass: blur(12px) saturate(120%); --radius:20px; --maxw:1200px;
       --shadow-neon:0 0 12px var(--lav), 0 0 28px color-mix(in srgb, var(--lav) 60%, transparent);
       --glow-strong:0 0 18px var(--lav), 0 0 48px var(--lav);
-      --live-red:#ff5a8a; --offline:#9aa0a8;
     }
     *{box-sizing:border-box}
     html,body{margin:0;height:100%}
@@ -46,13 +45,8 @@
       background:linear-gradient(90deg,rgba(55,42,92,.85),rgba(55,42,92,.65));
       border-bottom:1px solid rgba(197,184,255,.45);
       box-shadow:0 1px 0 rgba(197,184,255,.25); min-height:56px;display:flex;align-items:center;gap:14px}
-    .ticker .label{margin-left:12px; font-weight:900; letter-spacing:.14em; font-size:12px; color:#fff; text-shadow: 0 0 12px var(--lav); display:flex; flex-direction:column; align-items:flex-start; line-height:1; cursor:pointer}
+    .ticker .label{margin-left:12px; font-weight:900; letter-spacing:.14em; font-size:12px; color:#fff; text-shadow: 0 0 12px var(--lav); display:flex; align-items:center; line-height:1; cursor:pointer}
     .ticker .label:focus{outline:2px dashed rgba(197,184,255,.6); outline-offset:4px; border-radius:6px}
-    .liveBadge{margin-top:4px; font-size:12px; font-weight:800; display:flex; align-items:center; gap:8px}
-    .liveBadge .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-    .liveBadge.on{color:var(--live-red)} .liveBadge.on .dot{background:var(--live-red); box-shadow:0 0 10px var(--live-red),0 0 20px var(--live-red); animation:blink 1s infinite}
-    .liveBadge.off{color:var(--offline)} .liveBadge.off .dot{background:var(--offline)}
-    @keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
     .ticker .mask{overflow:hidden; flex:1}
     .ticker .track{display:flex; width:max-content; animation: marquee2 26s linear infinite}
     .ticker .row{display:flex; gap:20px; padding:0 12px}
@@ -136,7 +130,7 @@
     .no-scroll{overflow:hidden;height:100%}
 
     .toast{position: fixed; bottom:22px; right:22px; background: var(--card-strong); color:var(--text); border:1px solid rgba(197,184,255,.35); padding:12px 14px; border-radius:14px; box-shadow: 0 10px 30px rgba(0,0,0,.4); display:flex; gap:10px; align-items:flex-start; max-width: 360px; z-index:40}
-    .toast button{margin-left:auto; background:transparent; border:none; color:var(--muted); cursor:pointer; font-weight:700}
+    .toast button{margin-left:auto; background:transparent; border:none; color:#cbbfd6; cursor:pointer; font-weight:700}
 
     .reveal{opacity:0; transform: translateY(16px); transition: .6s ease}
     .reveal.visible{opacity:1; transform:none}
@@ -144,7 +138,7 @@
     /* ---- ADMIN PANEL (ukryty pod NEWS) ---- */
     .admin{
       position:fixed; top:60px; left:12px; z-index:60;
-      width:min(92vw, 380px);
+      width:min(92vw, 420px);
       border-radius:16px; border:1px solid rgba(197,184,255,.45);
       background:linear-gradient(180deg, rgba(70,54,120,.85), rgba(47,38,78,.85));
       backdrop-filter:var(--glass); box-shadow:0 20px 60px rgba(0,0,0,.55);
@@ -153,6 +147,9 @@
     }
     .admin.open{transform: translateY(0); opacity:1; pointer-events:auto}
     .admin .hd{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-bottom:1px solid rgba(197,184,255,.25); font-weight:900; letter-spacing:.06em}
+    .admin .tabs{display:flex; gap:8px; padding:8px 12px; border-bottom:1px solid rgba(197,184,255,.2)}
+    .admin .tab{padding:6px 10px; border-radius:10px; cursor:pointer; border:1px solid transparent; font-weight:800}
+    .admin .tab.active{border-color:rgba(197,184,255,.55); background:rgba(82,66,130,.4)}
     .admin .body{padding:12px}
     .admin input[type="text"], .admin input[type="url"], .admin input[type="password"]{
       width:100%; padding:9px 11px; border-radius:10px; border:1px solid rgba(197,184,255,.35); background:rgba(33,25,58,.6); color:#fff; outline:none
@@ -161,9 +158,15 @@
     .admin .row .del{border:none; background:transparent; color:#ffb7db; cursor:pointer; font-weight:800}
     .admin .mini{display:inline-block; padding:8px 10px; border-radius:12px; border:1px solid rgba(197,184,255,.55); background:rgba(82,66,130,.45); color:#fff; font-weight:800; cursor:pointer}
     .admin .bar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; margin-top:10px}
-    .admin small{color:var(--muted)}
-    .admin .note{font-size:12px; color:var(--muted); margin-top:10px}
+    .admin small, .admin .note{color:#cbbfd6}
     .admin .close{border:none; background:transparent; color:#fff; font-size:18px; cursor:pointer; line-height:1}
+    .admin .muted{font-size:12px; color:#cbbfd6}
+    .admin table{width:100%; border-collapse:separate; border-spacing:0 6px}
+    .admin td, .admin th{padding:6px 8px; text-align:left}
+    .admin th{font-size:12px; color:#cbbfd6}
+    .admin tr{background:rgba(82,66,130,.35); border-radius:10px}
+    .admin tr td:first-child{border-top-left-radius:10px;border-bottom-left-radius:10px}
+    .admin tr td:last-child{border-top-right-radius:10px;border-bottom-right-radius:10px}
 
     @media (max-width:520px){
       .admin{left:10px; right:10px; width:auto}
@@ -187,7 +190,6 @@
   <div class="ticker">
     <div class="label" id="newsButton" role="button" tabindex="0" title="Panel administracyjny">
       <div>NEWS</div>
-      <div id="liveBadge" class="liveBadge off"><span class="dot"></span> OFFLINE</div>
     </div>
     <div class="mask">
       <div id="tickerTrack" class="track">
@@ -203,15 +205,22 @@
       <span>Panel • <span id="adminState">logowanie</span></span>
       <button id="adminClose" class="close" aria-label="Zamknij panel">×</button>
     </div>
+
+    <div class="tabs">
+      <div id="tabLogin" class="tab active">Logowanie</div>
+      <div id="tabSocials" class="tab">Linki</div>
+      <div id="tabStats" class="tab">Statystyki</div>
+    </div>
+
     <div class="body">
       <!-- LOGOWANIE -->
       <form id="loginForm" autocomplete="off">
         <label for="pin"><small>PIN administratora</small></label>
-        <input id="pin" type="password" inputmode="numeric" placeholder="np. 1234" required />
+        <input id="pin" type="password" inputmode="numeric" placeholder="np. 123456" required />
         <div class="bar">
           <button class="mini" type="submit">Zaloguj</button>
         </div>
-        <div class="note">To jest tryb testowy (front‑end). Do produkcji użyj serwera lub Firebase Auth.</div>
+        <div class="note">By się zalogowac do panelu podaj pin</div>
       </form>
 
       <!-- EDYTOR SOCIALS -->
@@ -223,7 +232,7 @@
             <button id="logoutBtn" class="mini" type="button" style="margin-left:6px; background:rgba(255,110,140,.25); border-color:rgba(255,110,140,.6)">Wyloguj</button>
           </div>
         </div>
-        <div class="row" style="font-size:12px; color:var(--muted); font-weight:800">
+        <div class="row muted" style="font-weight:800">
           <div>Label</div><div>URL</div><div>Ikona URL (opcjonalnie)</div><div></div>
         </div>
         <div id="socialList"></div>
@@ -231,6 +240,26 @@
           <button id="saveSocials" class="mini" type="button">Zapisz</button>
         </div>
         <div class="note">Zmiany zapisują się w <code>localStorage</code> i od razu aktualizują listę na stronie.</div>
+      </div>
+
+      <!-- STATYSTYKI -->
+      <div id="adminStats" hidden>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px">
+          <strong>Statystyki kliknięć</strong>
+          <div class="muted" id="statsMeta"></div>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Kategoria</th><th>Liczba kliknięć</th></tr>
+          </thead>
+          <tbody id="statsBody"></tbody>
+        </table>
+        <div class="bar">
+          <button id="statsRefresh" class="mini" type="button">Odśwież</button>
+          <button id="statsExport" class="mini" type="button">Eksportuj JSON</button>
+          <button id="statsReset" class="mini" type="button" style="background:rgba(255,110,140,.25); border-color:rgba(255,110,140,.6)">Resetuj statystyki</button>
+        </div>
+        <div class="note">Kliknięcia zliczane są lokalnie w przeglądarce (localStorage). Jeśli chcesz zbierać globalne staty, potrzebny będzie backend.</div>
       </div>
     </div>
   </div>
@@ -311,15 +340,15 @@
 
       <!-- CTA do OF -->
       <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:center; margin:8px 0 14px">
-        <a class="mini-btn" href="https://onlyfans.com/vanessaszwaczka" target="_blank" rel="noopener">Zobacz pełne treści na OnlyFans</a>
-        <span style="font-size:12px; color:var(--muted)">@vanessaszwaczka</span>
+        <a id="ofCta" class="mini-btn" href="https://onlyfans.com/vanessaszwaczka" target="_blank" rel="noopener" data-key="OnlyFans">Zobacz pełne treści na OnlyFans</a>
+        <span style="font-size:12px; color:#cbbfd6">@vanessaszwaczka</span>
       </div>
 
       <!-- Galeria -->
       <div id="gallery" class="gallery" style="display:none"></div>
 
       <!-- Info -->
-      <div style="text-align:center; font-size:12px; color:var(--muted); margin-top:12px">
+      <div style="text-align:center; font-size:12px; color:#cbbfd6; margin-top:12px">
         Podglądy są zablokowane i rozmyte. Pełne zdjęcia i filmy dostępne po zalogowaniu na OnlyFans.
       </div>
     </section>
@@ -365,8 +394,7 @@
       /* Twitch EMBED: parent ustawiony na vanessa.snyuzii.xyz */
       twitchParents:['vanessa.snyuzii.xyz'],
       twitch:{ channelLogin:'vanessaszwaczka' },
-
-      /* EXCLUSIVE CONTENT placeholders – podmień src na własne miniatury (SFW) jeśli chcesz */
+      /* EXCLUSIVE CONTENT placeholders */
       exclusive: [
         { title:'Post #1', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23c5b8ff\'/><stop offset=\'100%\' stop-color=\'%23ffb7db\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.9\'><circle cx=\'150\' cy=\'160\' r=\'14\'/><circle cx=\'200\' cy=\'200\' r=\'10\'/><path d=\'M400 220 l16 40 44 12 -44 16 -16 44 -16 -44 -44 -16 44 -12z\'/></g></svg>'},
         { title:'Post #2', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23ffd6c3\'/><stop offset=\'100%\' stop-color=\'%23c5b8ff\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.85\'><path d=\'M400 160 l10 30 32 8 -32 12 -10 30 -10 -30 -32 -12 32 -8z\'/><circle cx=\'560\' cy=\'540\' r=\'8\'/><circle cx=\'520\' cy=\'500\' r=\'12\'/></g></svg>'},
@@ -377,26 +405,57 @@
       ]
     };
 
-    // --- ADMIN (demo) ---
+    // --- ADMIN ---
     const ADMIN = {
-      // Zmień PIN tutaj (tylko demo – niebezpieczne w produkcji!)
-      pin: '1234',
+      // nie aktualne - usunać pozniej
+      pinHash: 'ae5038a8e67688affff13ffd6d9c637ad99ed43a0cf49d64a03d67c43f887d23',
       lsKey: 'custom_socials_v1',
       adminKey: 'admin_logged'
     };
+
+    // --- STATS (localStorage) ---
+    const STATS = {
+      key: 'stats_clicks_v1',
+      data: null,
+      _load(){
+        try{
+          const raw = localStorage.getItem(this.key);
+          this.data = raw ? JSON.parse(raw) : { total:0, byKey:{}, lastReset: new Date().toISOString() };
+          if(typeof this.data.total !== 'number' || !this.data.byKey) throw 0;
+        }catch(e){
+          this.data = { total:0, byKey:{}, lastReset: new Date().toISOString() };
+          this._save();
+        }
+        return this.data;
+      },
+      _save(){ try{ localStorage.setItem(this.key, JSON.stringify(this.data)); }catch(e){} },
+      hit(name){
+        if(!this.data) this._load();
+        const k = String(name || 'Inne');
+        this.data.total += 1;
+        this.data.byKey[k] = (this.data.byKey[k] || 0) + 1;
+        this._save();
+      },
+      reset(){
+        this.data = { total:0, byKey:{}, lastReset: new Date().toISOString() };
+        this._save();
+      },
+      export(){ if(!this.data) this._load(); return JSON.stringify(this.data, null, 2); }
+    };
+    STATS._load();
 
     // ---------- INIT UI ----------
     const mainLogo = document.getElementById('mainLogo');
     const logoText = document.getElementById('logoText');
     mainLogo.textContent = CONFIG.logoText; logoText.textContent = CONFIG.logoText;
 
-    // ticker
+    // ticker feed
     const feedA = document.getElementById('tickerFeedA');
     const feedB = document.getElementById('tickerFeedB');
     const tickerHtml = CONFIG.news.map(t=>`<div class="item">${t}</div>`).join('');
     feedA.innerHTML = tickerHtml; feedB.innerHTML = tickerHtml;
 
-    // socials (render funkcja korzysta z localStorage)
+    // socials (render z localStorage/CONFIG)
     const socialsWrap = document.getElementById('socials');
     function getSocials(){
       try{
@@ -408,20 +467,28 @@
     function renderSocials(){
       const list = getSocials();
       socialsWrap.innerHTML = list.map(s=>
-        `<a class="chip" href="${s.url}" target="_blank" rel="noopener">
+        `<a class="chip" href="${s.url}" target="_blank" rel="noopener" data-key="${escapeHtml(s.label)}">
           <img src="${s.icon || 'https://simpleicons.org/icons/link.svg'}" alt="${s.label}"/><span>${s.label}</span>
         </a>`).join('');
     }
     renderSocials();
 
+    // TRACK: kliknięcia w social chips (delegacja)
+    socialsWrap.addEventListener('click', (e)=>{
+      const a = e.target.closest('a.chip');
+      if(!a) return;
+      const key = a.getAttribute('data-key') || 'Social';
+      STATS.hit(key);
+    });
+
     // Twitch embed + chat (parent = vanessa.snyuzii.xyz)
-    const parentsParam = ['vanessa.snyuzii.xyz'].map(encodeURIComponent).map(p=>`parent=${p}`).join('&');
+    const parentsParam = CONFIG.twitchParents.map(encodeURIComponent).map(p=>`parent=${p}`).join('&');
     document.getElementById('twitch-embed').src =
       `https://player.twitch.tv/?channel=${encodeURIComponent(CONFIG.twitch.channelLogin)}&${parentsParam}&muted=true`;
     document.getElementById('twitch-chat').src =
       `https://www.twitch.tv/embed/${encodeURIComponent(CONFIG.twitch.channelLogin)}/chat?${parentsParam}&darkpopout`;
 
-    // sparkles near logo
+    // sparkles przy logo
     const sparkWrap = document.getElementById('sparkles');
     for(let i=0;i<CONFIG.sparkleCount;i++){
       const s = document.createElement('i');
@@ -478,7 +545,7 @@
 
     function buildGallery(){
       gallery.innerHTML = CONFIG.exclusive.map((it)=>`
-        <a class="tile" href="${it.href}" target="_blank" rel="noopener" aria-label="${it.title} — OnlyFans (18+)">
+        <a class="tile" href="${it.href}" target="_blank" rel="noopener" aria-label="${it.title} — OnlyFans (18+)" data-key="OnlyFans">
           <span class="badge18">18+</span>
           <img loading="lazy" src="${it.src}" alt="${it.title} — podgląd rozmyty"/>
           <div class="veil">
@@ -490,9 +557,15 @@
         </a>`).join('');
     }
 
+    // TRACK: kliknięcia w OnlyFans (CTA + kafelki)
+    document.addEventListener('click', (e)=>{
+      const a = e.target.closest('a[data-key="OnlyFans"]');
+      if(a) STATS.hit('OnlyFans');
+    });
+
     // Age gate (sesja)
-    const ok = sessionStorage.getItem('of_age_ok') === '1';
-    if(ok){ gate.style.display='none'; gallery.style.display='grid'; buildGallery(); }
+    const ofOk = sessionStorage.getItem('of_age_ok') === '1';
+    if(ofOk){ gate.style.display='none'; gallery.style.display='grid'; buildGallery(); }
     gateOk.addEventListener('click', ()=>{
       sessionStorage.setItem('of_age_ok','1');
       gate.style.display='none';
@@ -505,13 +578,7 @@
     const disc = document.getElementById('contactDiscord');
     disc.textContent = CONFIG.contact.discord; disc.href = 'https://' + CONFIG.contact.discord;
 
-    // LIVE badge placeholder (bez Helix sekreta)
-    (function(){
-      const badge = document.getElementById('liveBadge');
-      badge.className='liveBadge off'; badge.innerHTML='<span class="dot"></span> OFFLINE';
-    })();
-
-    // ---------- ADMIN PANEL LOGIKA ----------
+    // ---------- ADMIN PANEL ----------
     const adminPanel = document.getElementById('adminPanel');
     const newsButton = document.getElementById('newsButton');
     const adminClose = document.getElementById('adminClose');
@@ -523,6 +590,15 @@
     const addSocialBtn = document.getElementById('addSocial');
     const saveSocialsBtn = document.getElementById('saveSocials');
     const logoutBtn = document.getElementById('logoutBtn');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabSocials = document.getElementById('tabSocials');
+    const tabStats = document.getElementById('tabStats');
+    const adminStats = document.getElementById('adminStats');
+    const statsBody = document.getElementById('statsBody');
+    const statsMeta = document.getElementById('statsMeta');
+    const statsRefresh = document.getElementById('statsRefresh');
+    const statsReset = document.getElementById('statsReset');
+    const statsExport = document.getElementById('statsExport');
 
     function openAdmin(){
       adminPanel.hidden = false;
@@ -532,7 +608,7 @@
       adminPanel.classList.remove('open');
       setTimeout(()=> adminPanel.hidden = true, 180);
     }
-    newsButton.addEventListener('click', ()=> openAdmin());
+    newsButton.addEventListener('click', openAdmin);
     newsButton.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); openAdmin(); }});
     adminClose.addEventListener('click', closeAdmin);
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !adminPanel.hidden){ closeAdmin(); }});
@@ -542,22 +618,54 @@
 
     function showLogin(){
       adminState.textContent = 'logowanie';
+      setTabActive(tabLogin);
       loginForm.hidden = false;
       editor.hidden = true;
+      adminStats.hidden = true;
       pinInput.value = '';
       pinInput.focus();
     }
     function showEditor(){
       adminState.textContent = 'edycja';
+      setTabActive(tabSocials);
       loginForm.hidden = true;
       editor.hidden = false;
+      adminStats.hidden = true;
       buildEditorRows();
     }
+    function showStats(){
+      adminState.textContent = 'statystyki';
+      setTabActive(tabStats);
+      loginForm.hidden = true;
+      editor.hidden = true;
+      adminStats.hidden = false;
+      renderStats();
+    }
 
-    loginForm.addEventListener('submit', (e)=>{
+    // Tabs
+    function setTabActive(tab){
+      [tabLogin, tabSocials, tabStats].forEach(t=> t.classList.remove('active'));
+      tab.classList.add('active');
+    }
+    tabLogin.addEventListener('click', showLogin);
+    tabSocials.addEventListener('click', ()=> isLogged()? showEditor() : showLogin());
+    tabStats.addEventListener('click', ()=> isLogged()? showStats() : showLogin());
+
+    // PIN: SHA-256 porównanie
+    async function hashHex(str){
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    }
+    async function checkPin(pin){
+      const hex = await hashHex(pin);
+      return hex === ADMIN.pinHash;
+    }
+
+    loginForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
       const pin = pinInput.value.trim();
-      if(pin === ADMIN.pin){
+      const ok = await checkPin(pin);
+      if(ok){
         setLogged(true);
         showEditor();
       }else{
@@ -572,6 +680,7 @@
       showLogin();
     });
 
+    // Edytor socials
     function buildEditorRows(){
       const items = getSocials();
       socialList.innerHTML = items.map((s, idx)=> rowHtml(s, idx)).join('');
@@ -621,6 +730,30 @@
     saveSocialsBtn.addEventListener('click', saveSocials);
 
     function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+
+    // STATYSTYKI – render, reset, export
+    function renderStats(){
+      const d = STATS._load();
+      const rows = Object.entries(d.byKey)
+        .sort((a,b)=> b[1]-a[1])
+        .map(([k,v])=> `<tr><td>${escapeHtml(k)}</td><td>${v}</td></tr>`)
+        .join('') || `<tr><td colspan="2" class="muted">Brak danych</td></tr>`;
+      statsBody.innerHTML = rows;
+      const date = new Date(d.lastReset);
+      statsMeta.textContent = `Łącznie: ${d.total} • Od: ${isNaN(date)?'—':date.toLocaleString()}`;
+    }
+    statsRefresh.addEventListener('click', renderStats);
+    statsReset.addEventListener('click', ()=>{
+      if(confirm('Na pewno zresetować statystyki?')){ STATS.reset(); renderStats(); }
+    });
+    statsExport.addEventListener('click', ()=>{
+      const blob = new Blob([STATS.export()], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'stats_clicks.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=> URL.revokeObjectURL(url), 500);
+    });
 
     // start panelu
     if(isLogged()) showEditor(); else showLogin();
