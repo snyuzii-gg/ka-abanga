@@ -117,7 +117,7 @@
     .gate .btn-no{border:none; background:transparent; color:#ffb7db; text-decoration:underline; cursor:pointer}
 
     /* CONTACT + FOOTER */
-    .contact{font-size:12px; color:var(--muted); text-align:center; line-height:1.8}
+    .contact{font-size:12px; color:#cbbfd6; text-align:center; line-height:1.8}
     .powered{margin-top:16px; position:relative; overflow:hidden; border-radius:var(--radius); text-align:center; padding:14px; font-size:12px; color:#fff; background: linear-gradient(180deg, rgba(70,54,120,.6), rgba(47,38,78,.75)); border:1px solid rgba(197,184,255,.35)}
     .powered::after{content:""; position:absolute; inset:0; background: linear-gradient(90deg, transparent, rgba(197,184,255,.5), transparent); transform: translateX(-100%); animation: scan 4.5s infinite}
     @keyframes scan{ 0%{ transform: translateX(-100%)} 60%{ transform: translateX(100%)} 100%{ transform: translateX(100%)} }
@@ -135,7 +135,7 @@
     .reveal{opacity:0; transform: translateY(16px); transition: .6s ease}
     .reveal.visible{opacity:1; transform:none}
 
-    /* ---- ADMIN PANEL (ukryty pod NEWS) ---- */
+    /* ---- ADMIN PANEL ---- */
     .admin{
       position:fixed; top:60px; left:12px; z-index:60;
       width:min(92vw, 420px);
@@ -144,6 +144,9 @@
       backdrop-filter:var(--glass); box-shadow:0 20px 60px rgba(0,0,0,.55);
       transform: translateY(-12px); opacity:0; pointer-events:none;
       transition: .22s transform ease, .22s opacity ease;
+      max-height: calc(100vh - 80px); /* <-- przewijanie panelu */
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .admin.open{transform: translateY(0); opacity:1; pointer-events:auto}
     .admin .hd{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-bottom:1px solid rgba(197,184,255,.25); font-weight:900; letter-spacing:.06em}
@@ -199,7 +202,7 @@
     </div>
   </div>
 
-  <!-- ADMIN PANEL (wysuwany spod NEWS) -->
+  <!-- ADMIN PANEL -->
   <div id="adminPanel" class="admin" hidden>
     <div class="hd">
       <span>Panel • <span id="adminState">logowanie</span></span>
@@ -315,7 +318,7 @@
       </div>
     </section>
 
-    <!-- KICK (pod Radyjko) -->
+    <!-- KICK -->
     <h2 class="zone reveal">STREFA KICK</h2>
     <section class="section grid reveal">
       <div class="card">
@@ -331,23 +334,19 @@
     <!-- EXCLUSIVE CONTENT (18+) -->
     <h2 class="zone reveal">STREFA EXCLUSIVE CONTENT (18+)</h2>
     <section class="section card reveal" style="padding:16px 18px">
-      <!-- Age gate -->
       <div id="gate" class="gate">
         <span>Ta sekcja zawiera treści dla dorosłych (18+).</span>
         <button id="gateOk" class="btn-ok">Jestem 18+</button>
         <button id="gateNo" class="btn-no">Wróć</button>
       </div>
 
-      <!-- CTA do OF -->
       <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:center; margin:8px 0 14px">
         <a id="ofCta" class="mini-btn" href="https://onlyfans.com/vanessaszwaczka" target="_blank" rel="noopener" data-key="OnlyFans">Zobacz pełne treści na OnlyFans</a>
         <span style="font-size:12px; color:#cbbfd6">@vanessaszwaczka</span>
       </div>
 
-      <!-- Galeria -->
       <div id="gallery" class="gallery" style="display:none"></div>
 
-      <!-- Info -->
       <div style="text-align:center; font-size:12px; color:#cbbfd6; margin-top:12px">
         Podglądy są zablokowane i rozmyte. Pełne zdjęcia i filmy dostępne po zalogowaniu na OnlyFans.
       </div>
@@ -391,10 +390,8 @@
       radio: { streamUrl:'https://stream.nightride.fm/nightride.mp3', cover:'https://i.imgur.com/IGjyCAy.png', title:'Radyjko', info:'Chill vibes — lo-fi / synth-pop / j-pop' },
       contact:{ discord:'discord.gg/Es3P7Quwpq' },
       showWelcomeToast:true, sparkleCount:22,
-      /* Twitch EMBED: parent ustawiony na vanessa.snyuzii.xyz */
       twitchParents:['vanessa.snyuzii.xyz'],
       twitch:{ channelLogin:'vanessaszwaczka' },
-      /* EXCLUSIVE CONTENT placeholders */
       exclusive: [
         { title:'Post #1', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23c5b8ff\'/><stop offset=\'100%\' stop-color=\'%23ffb7db\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.9\'><circle cx=\'150\' cy=\'160\' r=\'14\'/><circle cx=\'200\' cy=\'200\' r=\'10\'/><path d=\'M400 220 l16 40 44 12 -44 16 -16 44 -16 -44 -44 -16 44 -12z\'/></g></svg>'},
         { title:'Post #2', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23ffd6c3\'/><stop offset=\'100%\' stop-color=\'%23c5b8ff\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.85\'><path d=\'M400 160 l10 30 32 8 -32 12 -10 30 -10 -30 -32 -12 32 -8z\'/><circle cx=\'560\' cy=\'540\' r=\'8\'/><circle cx=\'520\' cy=\'500\' r=\'12\'/></g></svg>'},
@@ -405,9 +402,8 @@
       ]
     };
 
-    // --- ADMIN ---
+    // --- ADMIN (PIN hash — placeholder z poprzedniej wersji) ---
     const ADMIN = {
-      // nie aktualne - usunać pozniej
       pinHash: 'ae5038a8e67688affff13ffd6d9c637ad99ed43a0cf49d64a03d67c43f887d23',
       lsKey: 'custom_socials_v1',
       adminKey: 'admin_logged'
@@ -473,7 +469,7 @@
     }
     renderSocials();
 
-    // TRACK: kliknięcia w social chips (delegacja)
+    // TRACK: kliknięcia social chips
     socialsWrap.addEventListener('click', (e)=>{
       const a = e.target.closest('a.chip');
       if(!a) return;
@@ -481,14 +477,14 @@
       STATS.hit(key);
     });
 
-    // Twitch embed + chat (parent = vanessa.snyuzii.xyz)
+    // Twitch embed + chat
     const parentsParam = CONFIG.twitchParents.map(encodeURIComponent).map(p=>`parent=${p}`).join('&');
     document.getElementById('twitch-embed').src =
       `https://player.twitch.tv/?channel=${encodeURIComponent(CONFIG.twitch.channelLogin)}&${parentsParam}&muted=true`;
     document.getElementById('twitch-chat').src =
       `https://www.twitch.tv/embed/${encodeURIComponent(CONFIG.twitch.channelLogin)}/chat?${parentsParam}&darkpopout`;
 
-    // sparkles przy logo
+    // sparkles
     const sparkWrap = document.getElementById('sparkles');
     for(let i=0;i<CONFIG.sparkleCount;i++){
       const s = document.createElement('i');
@@ -557,7 +553,7 @@
         </a>`).join('');
     }
 
-    // TRACK: kliknięcia w OnlyFans (CTA + kafelki)
+    // TRACK: kliknięcia w OnlyFans
     document.addEventListener('click', (e)=>{
       const a = e.target.closest('a[data-key="OnlyFans"]');
       if(a) STATS.hit('OnlyFans');
@@ -718,20 +714,23 @@
       }catch(e){}
       renderSocials();
     }
+
+    // FIX: poprawione dodawanie bez zagnieżdżenia .row w .row
     addSocialBtn.addEventListener('click', ()=>{
-      const div = document.createElement('div');
-      div.className = 'row';
-      div.innerHTML = rowHtml({label:'',url:'',icon:''}, Date.now());
-      socialList.appendChild(div);
+      socialList.insertAdjacentHTML('beforeend', rowHtml({label:'',url:'',icon:''}, Date.now()));
       bindRowEvents();
-      const firstInput = div.querySelector('input[name="label"]');
-      firstInput && firstInput.focus();
+      const lastRow = socialList.lastElementChild;
+      const firstInput = lastRow && lastRow.querySelector('input[name="label"]');
+      if(firstInput){ firstInput.focus(); firstInput.select && firstInput.select(); }
+      // automatyczny scroll do nowego wiersza
+      lastRow && lastRow.scrollIntoView({behavior:'smooth', block:'nearest'});
     });
+
     saveSocialsBtn.addEventListener('click', saveSocials);
 
-    function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[m])); }
 
-    // STATYSTYKI – render, reset, export
+    // STATYSTYKI
     function renderStats(){
       const d = STATS._load();
       const rows = Object.entries(d.byKey)
