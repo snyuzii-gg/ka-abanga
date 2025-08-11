@@ -46,7 +46,8 @@
       background:linear-gradient(90deg,rgba(55,42,92,.85),rgba(55,42,92,.65));
       border-bottom:1px solid rgba(197,184,255,.45);
       box-shadow:0 1px 0 rgba(197,184,255,.25); min-height:56px;display:flex;align-items:center;gap:14px}
-    .ticker .label{margin-left:12px; font-weight:900; letter-spacing:.14em; font-size:12px; color:#fff; text-shadow: 0 0 12px var(--lav); display:flex; flex-direction:column; align-items:flex-start; line-height:1}
+    .ticker .label{margin-left:12px; font-weight:900; letter-spacing:.14em; font-size:12px; color:#fff; text-shadow: 0 0 12px var(--lav); display:flex; flex-direction:column; align-items:flex-start; line-height:1; cursor:pointer}
+    .ticker .label:focus{outline:2px dashed rgba(197,184,255,.6); outline-offset:4px; border-radius:6px}
     .liveBadge{margin-top:4px; font-size:12px; font-weight:800; display:flex; align-items:center; gap:8px}
     .liveBadge .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
     .liveBadge.on{color:var(--live-red)} .liveBadge.on .dot{background:var(--live-red); box-shadow:0 0 10px var(--live-red),0 0 20px var(--live-red); animation:blink 1s infinite}
@@ -140,20 +141,33 @@
     .reveal{opacity:0; transform: translateY(16px); transition: .6s ease}
     .reveal.visible{opacity:1; transform:none}
 
-    /* KICK — używa .card i .frame */
+    /* ---- ADMIN PANEL (ukryty pod NEWS) ---- */
+    .admin{
+      position:fixed; top:60px; left:12px; z-index:60;
+      width:min(92vw, 380px);
+      border-radius:16px; border:1px solid rgba(197,184,255,.45);
+      background:linear-gradient(180deg, rgba(70,54,120,.85), rgba(47,38,78,.85));
+      backdrop-filter:var(--glass); box-shadow:0 20px 60px rgba(0,0,0,.55);
+      transform: translateY(-12px); opacity:0; pointer-events:none;
+      transition: .22s transform ease, .22s opacity ease;
+    }
+    .admin.open{transform: translateY(0); opacity:1; pointer-events:auto}
+    .admin .hd{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-bottom:1px solid rgba(197,184,255,.25); font-weight:900; letter-spacing:.06em}
+    .admin .body{padding:12px}
+    .admin input[type="text"], .admin input[type="url"], .admin input[type="password"]{
+      width:100%; padding:9px 11px; border-radius:10px; border:1px solid rgba(197,184,255,.35); background:rgba(33,25,58,.6); color:#fff; outline:none
+    }
+    .admin .row{display:grid; grid-template-columns: 1.1fr 2fr 2fr auto; gap:8px; align-items:center; margin-bottom:8px}
+    .admin .row .del{border:none; background:transparent; color:#ffb7db; cursor:pointer; font-weight:800}
+    .admin .mini{display:inline-block; padding:8px 10px; border-radius:12px; border:1px solid rgba(197,184,255,.55); background:rgba(82,66,130,.45); color:#fff; font-weight:800; cursor:pointer}
+    .admin .bar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; margin-top:10px}
+    .admin small{color:var(--muted)}
+    .admin .note{font-size:12px; color:var(--muted); margin-top:10px}
+    .admin .close{border:none; background:transparent; color:#fff; font-size:18px; cursor:pointer; line-height:1}
 
-    @media(max-width: 980px){ .grid.stream{ grid-template-columns: 1fr; } .chat-note{ grid-column:auto; } }
-    @media(max-width: 600px){
-      main{margin:40px auto 90px; padding:0 14px}
-      .logo h1{font-size: clamp(34px, 9vw, 56px)}
-      .zone{font-size:11px; letter-spacing:.18em}
-      .section{margin:30px 0}
-      .chip{padding:9px 12px}
-      .radio{gap:12px; align-items:flex-start}
-      .radio .cover{width:44px; height:44px}
-      .radio h3{font-size:16px}
-      .radio .marquee{font-size:12px}
-      .toast{max-width:calc(100% - 32px)}
+    @media (max-width:520px){
+      .admin{left:10px; right:10px; width:auto}
+      .admin .row{grid-template-columns: 1fr}
     }
   </style>
 </head>
@@ -171,7 +185,7 @@
 
   <!-- TICKER -->
   <div class="ticker">
-    <div class="label">
+    <div class="label" id="newsButton" role="button" tabindex="0" title="Panel administracyjny">
       <div>NEWS</div>
       <div id="liveBadge" class="liveBadge off"><span class="dot"></span> OFFLINE</div>
     </div>
@@ -179,6 +193,44 @@
       <div id="tickerTrack" class="track">
         <div id="tickerFeedA" class="row" aria-hidden="false"></div>
         <div id="tickerFeedB" class="row" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL (wysuwany spod NEWS) -->
+  <div id="adminPanel" class="admin" hidden>
+    <div class="hd">
+      <span>Panel • <span id="adminState">logowanie</span></span>
+      <button id="adminClose" class="close" aria-label="Zamknij panel">×</button>
+    </div>
+    <div class="body">
+      <!-- LOGOWANIE -->
+      <form id="loginForm" autocomplete="off">
+        <label for="pin"><small>PIN administratora</small></label>
+        <input id="pin" type="password" inputmode="numeric" placeholder="np. 1234" required />
+        <div class="bar">
+          <button class="mini" type="submit">Zaloguj</button>
+        </div>
+        <div class="note">To jest tryb testowy (front‑end). Do produkcji użyj serwera lub Firebase Auth.</div>
+      </form>
+
+      <!-- EDYTOR SOCIALS -->
+      <div id="adminEditor" hidden>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px">
+          <strong>Social media</strong>
+          <div>
+            <button id="addSocial" class="mini" type="button">Dodaj</button>
+            <button id="logoutBtn" class="mini" type="button" style="margin-left:6px; background:rgba(255,110,140,.25); border-color:rgba(255,110,140,.6)">Wyloguj</button>
+          </div>
+        </div>
+        <div class="row" style="font-size:12px; color:var(--muted); font-weight:800">
+          <div>Label</div><div>URL</div><div>Ikona URL (opcjonalnie)</div><div></div>
+        </div>
+        <div id="socialList"></div>
+        <div class="bar">
+          <button id="saveSocials" class="mini" type="button">Zapisz</button>
+        </div>
+        <div class="note">Zmiany zapisują się w <code>localStorage</code> i od razu aktualizują listę na stronie.</div>
       </div>
     </div>
   </div>
@@ -314,7 +366,7 @@
       twitchParents:['vanessa.snyuzii.xyz'],
       twitch:{ channelLogin:'vanessaszwaczka' },
 
-      /* EXCLUSIVE CONTENT placeholders – podmień src na swoje (SFW) miniatury */
+      /* EXCLUSIVE CONTENT placeholders – podmień src na własne miniatury (SFW) jeśli chcesz */
       exclusive: [
         { title:'Post #1', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23c5b8ff\'/><stop offset=\'100%\' stop-color=\'%23ffb7db\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.9\'><circle cx=\'150\' cy=\'160\' r=\'14\'/><circle cx=\'200\' cy=\'200\' r=\'10\'/><path d=\'M400 220 l16 40 44 12 -44 16 -16 44 -16 -44 -44 -16 44 -12z\'/></g></svg>'},
         { title:'Post #2', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23ffd6c3\'/><stop offset=\'100%\' stop-color=\'%23c5b8ff\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.85\'><path d=\'M400 160 l10 30 32 8 -32 12 -10 30 -10 -30 -32 -12 32 -8z\'/><circle cx=\'560\' cy=\'540\' r=\'8\'/><circle cx=\'520\' cy=\'500\' r=\'12\'/></g></svg>'},
@@ -323,6 +375,14 @@
         { title:'Post #5', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23ffb7db\'/><stop offset=\'100%\' stop-color=\'%23c9ffe7\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.9\'><path d=\'M420 200 l12 32 34 10 -34 12 -12 34 -12 -34 -34 -12 34 -10z\'/></g></svg>'},
         { title:'Post #6', href:'https://onlyfans.com/vanessaszwaczka', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width=\'800\' height=\'800\'><defs><linearGradient id=\'g\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0%\' stop-color=\'%23c5b8ff\'/><stop offset=\'100%\' stop-color=\'%239b8cff\'/></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23g)\'/><g fill=\'%23ffffff\' fill-opacity=\'.9\'><circle cx=\'300\' cy=\'300\' r=\'12\'/><path d=\'M520 520 l14 36 36 10 -36 14 -14 36 -14 -36 -36 -14 36 -10z\'/></g></svg>'}
       ]
+    };
+
+    // --- ADMIN (demo) ---
+    const ADMIN = {
+      // Zmień PIN tutaj (tylko demo – niebezpieczne w produkcji!)
+      pin: '1234',
+      lsKey: 'custom_socials_v1',
+      adminKey: 'admin_logged'
     };
 
     // ---------- INIT UI ----------
@@ -336,14 +396,26 @@
     const tickerHtml = CONFIG.news.map(t=>`<div class="item">${t}</div>`).join('');
     feedA.innerHTML = tickerHtml; feedB.innerHTML = tickerHtml;
 
-    // socials
-    document.getElementById('socials').innerHTML = CONFIG.socials.map(s=>
-      `<a class="chip" href="${s.url}" target="_blank" rel="noopener">
-        <img src="${s.icon}" alt="${s.label}"/><span>${s.label}</span>
-      </a>`).join('');
+    // socials (render funkcja korzysta z localStorage)
+    const socialsWrap = document.getElementById('socials');
+    function getSocials(){
+      try{
+        const raw = localStorage.getItem(ADMIN.lsKey);
+        if(raw){ const arr = JSON.parse(raw); if(Array.isArray(arr) && arr.length) return arr; }
+      }catch(e){}
+      return CONFIG.socials;
+    }
+    function renderSocials(){
+      const list = getSocials();
+      socialsWrap.innerHTML = list.map(s=>
+        `<a class="chip" href="${s.url}" target="_blank" rel="noopener">
+          <img src="${s.icon || 'https://simpleicons.org/icons/link.svg'}" alt="${s.label}"/><span>${s.label}</span>
+        </a>`).join('');
+    }
+    renderSocials();
 
     // Twitch embed + chat (parent = vanessa.snyuzii.xyz)
-    const parentsParam = CONFIG.twitchParents.map(encodeURIComponent).map(p=>`parent=${p}`).join('&');
+    const parentsParam = ['vanessa.snyuzii.xyz'].map(encodeURIComponent).map(p=>`parent=${p}`).join('&');
     document.getElementById('twitch-embed').src =
       `https://player.twitch.tv/?channel=${encodeURIComponent(CONFIG.twitch.channelLogin)}&${parentsParam}&muted=true`;
     document.getElementById('twitch-chat').src =
@@ -418,10 +490,9 @@
         </a>`).join('');
     }
 
-    // Age gate (sesja przeglądarki)
+    // Age gate (sesja)
     const ok = sessionStorage.getItem('of_age_ok') === '1';
     if(ok){ gate.style.display='none'; gallery.style.display='grid'; buildGallery(); }
-
     gateOk.addEventListener('click', ()=>{
       sessionStorage.setItem('of_age_ok','1');
       gate.style.display='none';
@@ -439,6 +510,120 @@
       const badge = document.getElementById('liveBadge');
       badge.className='liveBadge off'; badge.innerHTML='<span class="dot"></span> OFFLINE';
     })();
+
+    // ---------- ADMIN PANEL LOGIKA ----------
+    const adminPanel = document.getElementById('adminPanel');
+    const newsButton = document.getElementById('newsButton');
+    const adminClose = document.getElementById('adminClose');
+    const adminState = document.getElementById('adminState');
+    const loginForm = document.getElementById('loginForm');
+    const pinInput = document.getElementById('pin');
+    const editor = document.getElementById('adminEditor');
+    const socialList = document.getElementById('socialList');
+    const addSocialBtn = document.getElementById('addSocial');
+    const saveSocialsBtn = document.getElementById('saveSocials');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    function openAdmin(){
+      adminPanel.hidden = false;
+      requestAnimationFrame(()=> adminPanel.classList.add('open'));
+    }
+    function closeAdmin(){
+      adminPanel.classList.remove('open');
+      setTimeout(()=> adminPanel.hidden = true, 180);
+    }
+    newsButton.addEventListener('click', ()=> openAdmin());
+    newsButton.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); openAdmin(); }});
+    adminClose.addEventListener('click', closeAdmin);
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !adminPanel.hidden){ closeAdmin(); }});
+
+    function isLogged(){ return sessionStorage.getItem(ADMIN.adminKey) === '1'; }
+    function setLogged(v){ sessionStorage.setItem(ADMIN.adminKey, v ? '1' : '0'); }
+
+    function showLogin(){
+      adminState.textContent = 'logowanie';
+      loginForm.hidden = false;
+      editor.hidden = true;
+      pinInput.value = '';
+      pinInput.focus();
+    }
+    function showEditor(){
+      adminState.textContent = 'edycja';
+      loginForm.hidden = true;
+      editor.hidden = false;
+      buildEditorRows();
+    }
+
+    loginForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const pin = pinInput.value.trim();
+      if(pin === ADMIN.pin){
+        setLogged(true);
+        showEditor();
+      }else{
+        pinInput.value = '';
+        pinInput.placeholder = 'Błędny PIN';
+        pinInput.focus();
+      }
+    });
+
+    logoutBtn.addEventListener('click', ()=>{
+      setLogged(false);
+      showLogin();
+    });
+
+    function buildEditorRows(){
+      const items = getSocials();
+      socialList.innerHTML = items.map((s, idx)=> rowHtml(s, idx)).join('');
+      bindRowEvents();
+    }
+    function rowHtml(s, idx){
+      return `<div class="row" data-idx="${idx}">
+        <input type="text" name="label" value="${escapeHtml(s.label)}" placeholder="np. Instagram"/>
+        <input type="url"  name="url"   value="${escapeHtml(s.url)}"   placeholder="https://..."/>
+        <input type="url"  name="icon"  value="${escapeHtml(s.icon || '')}" placeholder="URL ikony (opc.)"/>
+        <button class="del" type="button" title="Usuń">✕</button>
+      </div>`;
+    }
+    function bindRowEvents(){
+      socialList.querySelectorAll('.del').forEach(btn=>{
+        btn.addEventListener('click', (e)=>{
+          const row = e.target.closest('.row');
+          row.remove();
+        });
+      });
+    }
+    function collectRows(){
+      const rows = Array.from(socialList.querySelectorAll('.row'));
+      return rows.map(r=>{
+        const label = r.querySelector('input[name="label"]').value.trim();
+        const url   = r.querySelector('input[name="url"]').value.trim();
+        const icon  = r.querySelector('input[name="icon"]').value.trim();
+        return {label, url, icon};
+      }).filter(x=>x.label && x.url);
+    }
+    function saveSocials(){
+      const data = collectRows();
+      try{
+        localStorage.setItem(ADMIN.lsKey, JSON.stringify(data));
+      }catch(e){}
+      renderSocials();
+    }
+    addSocialBtn.addEventListener('click', ()=>{
+      const div = document.createElement('div');
+      div.className = 'row';
+      div.innerHTML = rowHtml({label:'',url:'',icon:''}, Date.now());
+      socialList.appendChild(div);
+      bindRowEvents();
+      const firstInput = div.querySelector('input[name="label"]');
+      firstInput && firstInput.focus();
+    });
+    saveSocialsBtn.addEventListener('click', saveSocials);
+
+    function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+
+    // start panelu
+    if(isLogged()) showEditor(); else showLogin();
   </script>
 </body>
 </html>
