@@ -372,7 +372,6 @@
 
   <script>
     /* ================= API ================= */
-    // Jeśli front i API są w tym samym projekcie Vercel – zostaw pusty string:
     const API_BASE = '';
 
     /* ================= CONFIG ================= */
@@ -425,7 +424,7 @@
         }catch(e){}
       },
       async getAll(){
-        const r = await fetch(`${API_BASE}/api/click`, { cache:'no-store' });
+        const r = await fetch(`${API_BASE}/api/click?ts=${Date.now()}`, { cache:'no-store' });
         return r.json(); // { byKey:{}, total:n }
       },
       async reset(pin){
@@ -438,14 +437,23 @@
       }
     };
 
-    /* ===== SOCIALS via API ===== */
+    /* ============ SOCIALS via API (hot‑fix normalizacji) ============ */
+    function normalizeItems(items){
+      // items może być tablicą, stringiem JSON lub stringiem zagnieżdżonym
+      let out = items;
+      if (typeof out === 'string') { try { out = JSON.parse(out); } catch {} }
+      if (typeof out === 'string') { try { out = JSON.parse(out); } catch {} }
+      if (!Array.isArray(out)) out = [];
+      return out;
+    }
     async function fetchSocials(){
       try{
-        const r = await fetch(`${API_BASE}/api/socials`, { cache:'no-store' });
+        const r = await fetch(`${API_BASE}/api/socials?ts=${Date.now()}`, { cache:'no-store' });
         const j = await r.json();
-        if(Array.isArray(j.items) && j.items.length) return j.items;
+        const items = normalizeItems(j.items);
+        if(items.length) return items;
       }catch(e){}
-      return CONFIG.socialsFallback; // fallback, gdy pusto
+      return CONFIG.socialsFallback; // fallback, gdy pusto lub błąd
     }
     async function saveSocials(items, pinHash){
       const r = await fetch(`${API_BASE}/api/socials`, {
@@ -642,7 +650,7 @@
       loginForm.hidden = true;
       editor.hidden = false;
       adminStats.hidden = true;
-      const items = await fetchSocials();
+      const items = await fetchSocials(); // już znormalizowane
       socialList.innerHTML = items.map((s, idx)=> rowHtml(s, idx)).join('');
       bindRowEvents();
     }
@@ -690,8 +698,8 @@
     // Edytor socials
     function rowHtml(s, idx){
       return `<div class="row" data-idx="${idx}">
-        <input type="text" name="label" value="${escapeHtml(s.label)}" placeholder="np. Instagram"/>
-        <input type="url"  name="url"   value="${escapeHtml(s.url)}"   placeholder="https://..."/>
+        <input type="text" name="label" value="${escapeHtml(s.label||'')}" placeholder="np. Instagram"/>
+        <input type="url"  name="url"   value="${escapeHtml(s.url||'')}"   placeholder="https://..."/>
         <input type="url"  name="icon"  value="${escapeHtml(s.icon || '')}" placeholder="URL ikony (opc.)"/>
         <button class="del" type="button" title="Usuń">✕</button>
       </div>`;
@@ -729,6 +737,7 @@
       const resp = await saveSocials(data, await hashHex(pin)); // wysyłamy pinHash
       if(resp && resp.ok){
         await renderSocials();
+        await showEditor(); // odbuduj edytor z tego, co zwraca API
         alert('Zapisano!');
       }else{
         alert('Błąd zapisu (autoryzacja/KV?)');
@@ -757,7 +766,7 @@
     statsReset.addEventListener('click', async ()=>{
       const pin = prompt('Podaj PIN do resetu statystyk:');
       if(!pin) return;
-      const r = await STATS.reset(pin); // wysyłamy surowy PIN – backend porówna hash
+      const r = await STATS.reset(pin); // backend porówna hash
       if(r && r.ok){ renderStats(); } else { alert('Błąd autoryzacji lub KV'); }
     });
 
