@@ -1,26 +1,41 @@
+// api/socials.js
 export default async function handler(req, res) {
-  const KV_REST_API_URL = "https://eager-eft-54703.upstash.io";
-  const KV_REST_API_TOKEN = "AdWvAAIjcDE1YzY4Y2EyZDJmNmM0YmUxOWJjMDdhNTVjODkxMzk0MnAxMA";
+  const base = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  const adminPinHash = process.env.ADMIN_PIN_HASH;
+  if (!base || !token || !adminPinHash) return res.status(500).json({ error: 'env missing' });
 
-  if (req.method === "GET") {
-    const response = await fetch(`${KV_REST_API_URL}/get/socials`, {
-      headers: { Authorization: `Bearer ${KV_REST_API_TOKEN}` }
-    });
-    const data = await response.json();
-    res.status(200).json(data ? JSON.parse(data.result) : { items: [] });
-  }
+  try {
+    if (req.method === 'GET') {
+      const gr = await fetch(`${base}/get/socials`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const gj = await gr.json();
+      return res.status(200).json({ items: gj?.result || [] });
+    }
 
-  if (req.method === "POST") {
-    const body = req.body;
-    await fetch(`${KV_REST_API_URL}/set/socials`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${KV_REST_API_TOKEN}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ value: JSON.stringify(body) })
-    });
-    res.status(200).json({ ok: true });
+    if (req.method === 'POST') {
+      const { socials, pinHash } = req.body || {};
+      if (!Array.isArray(socials)) return res.status(400).json({ error: 'invalid socials' });
+      if (!pinHash || pinHash !== adminPinHash) return res.status(401).json({ error: 'unauthorized' });
+
+      const sr = await fetch(`${base}/set/socials`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(socials)
+      });
+      const sj = await sr.json();
+      if (sj?.result !== 'OK') return res.status(500).json({ error: 'kv set failed' });
+
+      return res.status(200).json({ ok: true });
+    }
+
+    res.setHeader('Allow', ['GET','POST']);
+    res.status(405).end();
+  } catch (e) {
+    res.status(500).json({ error: String(e?.message || e) });
   }
 }
-
