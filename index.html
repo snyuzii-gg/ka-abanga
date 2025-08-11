@@ -255,14 +255,14 @@
           <thead>
             <tr><th>Kategoria</th><th>Liczba kliknięć</th></tr>
           </thead>
-          <tbody id="statsBody"></tbody>
+        <tbody id="statsBody"></tbody>
         </table>
         <div class="bar">
           <button id="statsRefresh" class="mini" type="button">Odśwież</button>
           <button id="statsExport" class="mini" type="button">Eksportuj JSON</button>
           <button id="statsReset" class="mini" type="button" style="background:rgba(255,110,140,.25); border-color:rgba(255,110,140,.6)">Resetuj statystyki</button>
         </div>
-        <div class="note">Dane liczone globalnie Reset wymaga PIN.</div>
+        <div class="note">Dane liczone globalnie w Redis (Upstash). Reset wymaga PIN.</div>
       </div>
     </div>
   </div>
@@ -371,12 +371,11 @@
   </div>
 
   <script>
-    // ===== API CONFIG =====
-    // Jeśli front i API są w tym samym projekcie Vercel -> zostaw pusty string.
-    // Jeśli API jest osobno: wpisz pełny URL, np. 'https://twoj-projekt.vercel.app'
+    /* ================= API ================= */
+    // Jeśli front i API są w tym samym projekcie Vercel – zostaw pusty string:
     const API_BASE = '';
 
-    // ---------- CONFIG ----------
+    /* ================= CONFIG ================= */
     const CONFIG = {
       logoText: 'vanessaszwaczka',
       news: [
@@ -385,7 +384,7 @@
         'Follow na Instagramie i TikToku',
         'Kick: kick.com/vanessaszwaczka'
       ],
-      socials: [
+      socialsFallback: [
         {label:'Twitch',   icon:'https://simpleicons.org/icons/twitch.svg',   url:'https://www.twitch.tv/vanessaszwaczka'},
         {label:'Instagram',icon:'https://simpleicons.org/icons/instagram.svg',url:'https://www.instagram.com/vanessaszwaczka/'},
         {label:'TikTok',   icon:'https://simpleicons.org/icons/tiktok.svg',   url:'https://www.tiktok.com/@vanessaszwaczka'},
@@ -407,26 +406,27 @@
       ]
     };
 
-    // --- ADMIN  wyjebac nie dziala---
+    /* ===== ADMIN (lokalna weryfikacja PIN dla UX) ===== */
     const ADMIN = {
+      // SHA-256("110825")
       pinHash: 'ae5038a8e67688affff13ffd6d9c637ad99ed43a0cf49d64a03d67c43f887d23',
       adminKey: 'admin_logged'
     };
 
-    // ===== STATS przez API (global) =====
+    /* ===== STATS via API ===== */
     const STATS = {
       async hit(name){
         try{
-          await fetch(`${API_BASE}/api/hit`, {
+          await fetch(`${API_BASE}/api/click`, {
             method:'POST',
             headers:{'content-type':'application/json'},
-            body: JSON.stringify({ key: String(name||'Inne') })
+            body: JSON.stringify({ name: String(name||'Inne') })
           });
         }catch(e){}
       },
-      async fetchAll(){
-        const r = await fetch(`${API_BASE}/api/stats`, { cache:'no-store' });
-        return r.json();
+      async getAll(){
+        const r = await fetch(`${API_BASE}/api/click`, { cache:'no-store' });
+        return r.json(); // { byKey:{}, total:n }
       },
       async reset(pin){
         const r = await fetch(`${API_BASE}/api/stats-reset`, {
@@ -435,29 +435,28 @@
           body: JSON.stringify({ pin })
         });
         return r.json();
-      },
-      exportLocal(d){ return JSON.stringify(d, null, 2); } // pomoc do eksportu w UI
+      }
     };
 
-    // ===== Socials przez API (global) =====
-    async function getSocialsRemote(){
+    /* ===== SOCIALS via API ===== */
+    async function fetchSocials(){
       try{
         const r = await fetch(`${API_BASE}/api/socials`, { cache:'no-store' });
         const j = await r.json();
-        if (Array.isArray(j.items)) return j.items;
+        if(Array.isArray(j.items) && j.items.length) return j.items;
       }catch(e){}
-      return CONFIG.socials; // fallback
+      return CONFIG.socialsFallback; // fallback, gdy pusto
     }
-    async function saveSocialsRemote(items, pin){
+    async function saveSocials(items, pinHash){
       const r = await fetch(`${API_BASE}/api/socials`, {
         method:'POST',
         headers:{'content-type':'application/json'},
-        body: JSON.stringify({ pin, items })
+        body: JSON.stringify({ socials: items, pinHash })
       });
       return r.json();
     }
 
-    // ---------- INIT UI ----------
+    /* ================= INIT UI ================= */
     const mainLogo = document.getElementById('mainLogo');
     const logoText = document.getElementById('logoText');
     mainLogo.textContent = CONFIG.logoText; logoText.textContent = CONFIG.logoText;
@@ -468,18 +467,18 @@
     const tickerHtml = CONFIG.news.map(t=>`<div class="item">${t}</div>`).join('');
     feedA.innerHTML = tickerHtml; feedB.innerHTML = tickerHtml;
 
-    // socials (render z API)
+    // socials render
     const socialsWrap = document.getElementById('socials');
     async function renderSocials(){
-      const list = await getSocialsRemote();
-      socialsWrap.innerHTML = list.map(s=>
-        `<a class="chip" href="${s.url}" target="_blank" rel="noopener" data-key="${escapeHtml(s.label)}">
+      const list = await fetchSocials();
+      socialsWrap.innerHTML = list.map(s=>`
+        <a class="chip" href="${s.url}" target="_blank" rel="noopener" data-key="${escapeHtml(s.label)}">
           <img src="${s.icon || 'https://simpleicons.org/icons/link.svg'}" alt="${s.label}"/><span>${s.label}</span>
         </a>`).join('');
     }
     renderSocials();
 
-    // TRACK: kliknięcia social chips
+    // track clicks (socials)
     socialsWrap.addEventListener('click', (e)=>{
       const a = e.target.closest('a.chip');
       if(!a) return;
@@ -563,7 +562,7 @@
         </a>`).join('');
     }
 
-    // TRACK: kliknięcia w OnlyFans
+    // track: OnlyFans
     document.addEventListener('click', (e)=>{
       const a = e.target.closest('a[data-key="OnlyFans"]');
       if(a) STATS.hit('OnlyFans');
@@ -584,7 +583,7 @@
     const disc = document.getElementById('contactDiscord');
     disc.textContent = CONFIG.contact.discord; disc.href = 'https://' + CONFIG.contact.discord;
 
-    // ---------- ADMIN PANEL ----------
+    /* ================= ADMIN PANEL ================= */
     const adminPanel = document.getElementById('adminPanel');
     const newsButton = document.getElementById('newsButton');
     const adminClose = document.getElementById('adminClose');
@@ -622,6 +621,11 @@
     function isLogged(){ return sessionStorage.getItem(ADMIN.adminKey) === '1'; }
     function setLogged(v){ sessionStorage.setItem(ADMIN.adminKey, v ? '1' : '0'); }
 
+    function setTabActive(tab){
+      [tabLogin, tabSocials, tabStats].forEach(t=> t.classList.remove('active'));
+      tab.classList.add('active');
+    }
+
     function showLogin(){
       adminState.textContent = 'logowanie';
       setTabActive(tabLogin);
@@ -631,49 +635,44 @@
       pinInput.value = '';
       pinInput.focus();
     }
+
     async function showEditor(){
       adminState.textContent = 'edycja';
       setTabActive(tabSocials);
       loginForm.hidden = true;
       editor.hidden = false;
       adminStats.hidden = true;
-      const items = await getSocialsRemote();
+      const items = await fetchSocials();
       socialList.innerHTML = items.map((s, idx)=> rowHtml(s, idx)).join('');
       bindRowEvents();
     }
+
     async function showStats(){
       adminState.textContent = 'statystyki';
       setTabActive(tabStats);
       loginForm.hidden = true;
-      editor.hidden = false; // układ
+      editor.hidden = true;
       adminStats.hidden = false;
       await renderStats();
     }
 
-    // Tabs
-    function setTabActive(tab){
-      [tabLogin, tabSocials, tabStats].forEach(t=> t.classList.remove('active'));
-      tab.classList.add('active');
-    }
     tabLogin.addEventListener('click', showLogin);
     tabSocials.addEventListener('click', ()=> isLogged()? showEditor() : showLogin());
     tabStats.addEventListener('click', ()=> isLogged()? showStats() : showLogin());
 
-    // PIN lokalny (dla UX) + porównanie SHA-256
+    // PIN (lokalne sprawdzenie dla UX)
     async function hashHex(str){
       const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
       return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
     }
-    async function checkPin(pin){
-      const hex = await hashHex(pin);
-      return hex === ADMIN.pinHash;
+    async function checkPinLocal(pin){
+      return (await hashHex(pin)) === ADMIN.pinHash;
     }
 
     loginForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
       const pin = pinInput.value.trim();
-      const ok = await checkPin(pin);
-      if(ok){
+      if(await checkPinLocal(pin)){
         setLogged(true);
         showEditor();
       }else{
@@ -727,28 +726,26 @@
       const data = collectRows();
       const pin = prompt('Potwierdź PIN, aby zapisać zmiany:');
       if(!pin) return;
-      const resp = await saveSocialsRemote(data, pin);
+      const resp = await saveSocials(data, await hashHex(pin)); // wysyłamy pinHash
       if(resp && resp.ok){
         await renderSocials();
         alert('Zapisano!');
       }else{
-        alert('Błąd zapisu (autoryzacja?)');
+        alert('Błąd zapisu (autoryzacja/KV?)');
       }
     });
 
     // STATYSTYKI – render, reset, export
     async function renderStats(){
-      const d = await STATS.fetchAll();
+      const d = await STATS.getAll(); // {byKey,total}
       const rows = Object.entries(d.byKey || {})
         .sort((a,b)=> b[1]-a[1])
         .map(([k,v])=> `<tr><td>${escapeHtml(k)}</td><td>${v}</td></tr>`)
         .join('') || `<tr><td colspan="2" class="muted">Brak danych</td></tr>`;
       statsBody.innerHTML = rows;
-      const date = new Date(d.lastReset || 0);
-      statsMeta.textContent = `Łącznie: ${d.total||0} • Od: ${isNaN(date)?'—':date.toLocaleString()}`;
-      // Eksport (z API nie mamy wszystkich surowych, ale złożymy z odpowiedzi)
+      statsMeta.textContent = `Łącznie: ${d.total||0}`;
       statsExport.onclick = ()=>{
-        const blob = new Blob([STATS.exportLocal(d)], {type:'application/json'});
+        const blob = new Blob([JSON.stringify(d, null, 2)], {type:'application/json'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = 'stats_clicks.json';
@@ -760,8 +757,8 @@
     statsReset.addEventListener('click', async ()=>{
       const pin = prompt('Podaj PIN do resetu statystyk:');
       if(!pin) return;
-      const r = await STATS.reset(pin);
-      if(r && r.ok){ renderStats(); } else { alert('Błąd autoryzacji'); }
+      const r = await STATS.reset(pin); // wysyłamy surowy PIN – backend porówna hash
+      if(r && r.ok){ renderStats(); } else { alert('Błąd autoryzacji lub KV'); }
     });
 
     // start panelu
