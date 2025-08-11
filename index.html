@@ -144,7 +144,7 @@
       backdrop-filter:var(--glass); box-shadow:0 20px 60px rgba(0,0,0,.55);
       transform: translateY(-12px); opacity:0; pointer-events:none;
       transition: .22s transform ease, .22s opacity ease;
-      max-height: calc(100vh - 80px); /* <-- przewijanie panelu */
+      max-height: calc(100vh - 80px);
       overflow: auto;
       -webkit-overflow-scrolling: touch;
     }
@@ -242,7 +242,7 @@
         <div class="bar">
           <button id="saveSocials" class="mini" type="button">Zapisz</button>
         </div>
-        <div class="note">Zmiany zapisują się w <code>localStorage</code> i od razu aktualizują listę na stronie.</div>
+        <div class="note">Zmiany zapisują się globalnie (API na Vercel) i od razu aktualizują listę na stronie.</div>
       </div>
 
       <!-- STATYSTYKI -->
@@ -262,7 +262,7 @@
           <button id="statsExport" class="mini" type="button">Eksportuj JSON</button>
           <button id="statsReset" class="mini" type="button" style="background:rgba(255,110,140,.25); border-color:rgba(255,110,140,.6)">Resetuj statystyki</button>
         </div>
-        <div class="note">Kliknięcia zliczane są lokalnie w przeglądarce (localStorage). Jeśli chcesz zbierać globalne staty, potrzebny będzie backend.</div>
+        <div class="note">Dane liczone globalnie Reset wymaga PIN.</div>
       </div>
     </div>
   </div>
@@ -371,6 +371,11 @@
   </div>
 
   <script>
+    // ===== API CONFIG =====
+    // Jeśli front i API są w tym samym projekcie Vercel -> zostaw pusty string.
+    // Jeśli API jest osobno: wpisz pełny URL, np. 'https://twoj-projekt.vercel.app'
+    const API_BASE = '';
+
     // ---------- CONFIG ----------
     const CONFIG = {
       logoText: 'vanessaszwaczka',
@@ -402,43 +407,55 @@
       ]
     };
 
-    // --- ADMIN usunąć pozniej juz nie dziala---
+    // --- ADMIN  wyjebac nie dziala---
     const ADMIN = {
       pinHash: 'ae5038a8e67688affff13ffd6d9c637ad99ed43a0cf49d64a03d67c43f887d23',
-      lsKey: 'custom_socials_v1',
       adminKey: 'admin_logged'
     };
 
-    // --- STATS (localStorage) ---
+    // ===== STATS przez API (global) =====
     const STATS = {
-      key: 'stats_clicks_v1',
-      data: null,
-      _load(){
+      async hit(name){
         try{
-          const raw = localStorage.getItem(this.key);
-          this.data = raw ? JSON.parse(raw) : { total:0, byKey:{}, lastReset: new Date().toISOString() };
-          if(typeof this.data.total !== 'number' || !this.data.byKey) throw 0;
-        }catch(e){
-          this.data = { total:0, byKey:{}, lastReset: new Date().toISOString() };
-          this._save();
-        }
-        return this.data;
+          await fetch(`${API_BASE}/api/hit`, {
+            method:'POST',
+            headers:{'content-type':'application/json'},
+            body: JSON.stringify({ key: String(name||'Inne') })
+          });
+        }catch(e){}
       },
-      _save(){ try{ localStorage.setItem(this.key, JSON.stringify(this.data)); }catch(e){} },
-      hit(name){
-        if(!this.data) this._load();
-        const k = String(name || 'Inne');
-        this.data.total += 1;
-        this.data.byKey[k] = (this.data.byKey[k] || 0) + 1;
-        this._save();
+      async fetchAll(){
+        const r = await fetch(`${API_BASE}/api/stats`, { cache:'no-store' });
+        return r.json();
       },
-      reset(){
-        this.data = { total:0, byKey:{}, lastReset: new Date().toISOString() };
-        this._save();
+      async reset(pin){
+        const r = await fetch(`${API_BASE}/api/stats-reset`, {
+          method:'POST',
+          headers:{'content-type':'application/json'},
+          body: JSON.stringify({ pin })
+        });
+        return r.json();
       },
-      export(){ if(!this.data) this._load(); return JSON.stringify(this.data, null, 2); }
+      exportLocal(d){ return JSON.stringify(d, null, 2); } // pomoc do eksportu w UI
     };
-    STATS._load();
+
+    // ===== Socials przez API (global) =====
+    async function getSocialsRemote(){
+      try{
+        const r = await fetch(`${API_BASE}/api/socials`, { cache:'no-store' });
+        const j = await r.json();
+        if (Array.isArray(j.items)) return j.items;
+      }catch(e){}
+      return CONFIG.socials; // fallback
+    }
+    async function saveSocialsRemote(items, pin){
+      const r = await fetch(`${API_BASE}/api/socials`, {
+        method:'POST',
+        headers:{'content-type':'application/json'},
+        body: JSON.stringify({ pin, items })
+      });
+      return r.json();
+    }
 
     // ---------- INIT UI ----------
     const mainLogo = document.getElementById('mainLogo');
@@ -451,17 +468,10 @@
     const tickerHtml = CONFIG.news.map(t=>`<div class="item">${t}</div>`).join('');
     feedA.innerHTML = tickerHtml; feedB.innerHTML = tickerHtml;
 
-    // socials (render z localStorage/CONFIG)
+    // socials (render z API)
     const socialsWrap = document.getElementById('socials');
-    function getSocials(){
-      try{
-        const raw = localStorage.getItem(ADMIN.lsKey);
-        if(raw){ const arr = JSON.parse(raw); if(Array.isArray(arr) && arr.length) return arr; }
-      }catch(e){}
-      return CONFIG.socials;
-    }
-    function renderSocials(){
-      const list = getSocials();
+    async function renderSocials(){
+      const list = await getSocialsRemote();
       socialsWrap.innerHTML = list.map(s=>
         `<a class="chip" href="${s.url}" target="_blank" rel="noopener" data-key="${escapeHtml(s.label)}">
           <img src="${s.icon || 'https://simpleicons.org/icons/link.svg'}" alt="${s.label}"/><span>${s.label}</span>
@@ -621,21 +631,23 @@
       pinInput.value = '';
       pinInput.focus();
     }
-    function showEditor(){
+    async function showEditor(){
       adminState.textContent = 'edycja';
       setTabActive(tabSocials);
       loginForm.hidden = true;
       editor.hidden = false;
       adminStats.hidden = true;
-      buildEditorRows();
+      const items = await getSocialsRemote();
+      socialList.innerHTML = items.map((s, idx)=> rowHtml(s, idx)).join('');
+      bindRowEvents();
     }
-    function showStats(){
+    async function showStats(){
       adminState.textContent = 'statystyki';
       setTabActive(tabStats);
       loginForm.hidden = true;
-      editor.hidden = true;
+      editor.hidden = false; // układ
       adminStats.hidden = false;
-      renderStats();
+      await renderStats();
     }
 
     // Tabs
@@ -647,7 +659,7 @@
     tabSocials.addEventListener('click', ()=> isLogged()? showEditor() : showLogin());
     tabStats.addEventListener('click', ()=> isLogged()? showStats() : showLogin());
 
-    // PIN: SHA-256 porównanie
+    // PIN lokalny (dla UX) + porównanie SHA-256
     async function hashHex(str){
       const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
       return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
@@ -677,11 +689,6 @@
     });
 
     // Edytor socials
-    function buildEditorRows(){
-      const items = getSocials();
-      socialList.innerHTML = items.map((s, idx)=> rowHtml(s, idx)).join('');
-      bindRowEvents();
-    }
     function rowHtml(s, idx){
       return `<div class="row" data-idx="${idx}">
         <input type="text" name="label" value="${escapeHtml(s.label)}" placeholder="np. Instagram"/>
@@ -707,55 +714,63 @@
         return {label, url, icon};
       }).filter(x=>x.label && x.url);
     }
-    function saveSocials(){
-      const data = collectRows();
-      try{
-        localStorage.setItem(ADMIN.lsKey, JSON.stringify(data));
-      }catch(e){}
-      renderSocials();
-    }
-
-    // FIX: poprawione dodawanie bez zagnieżdżenia .row w .row
     addSocialBtn.addEventListener('click', ()=>{
       socialList.insertAdjacentHTML('beforeend', rowHtml({label:'',url:'',icon:''}, Date.now()));
       bindRowEvents();
       const lastRow = socialList.lastElementChild;
       const firstInput = lastRow && lastRow.querySelector('input[name="label"]');
       if(firstInput){ firstInput.focus(); firstInput.select && firstInput.select(); }
-      // automatyczny scroll do nowego wiersza
       lastRow && lastRow.scrollIntoView({behavior:'smooth', block:'nearest'});
     });
 
-    saveSocialsBtn.addEventListener('click', saveSocials);
+    saveSocialsBtn.addEventListener('click', async ()=>{
+      const data = collectRows();
+      const pin = prompt('Potwierdź PIN, aby zapisać zmiany:');
+      if(!pin) return;
+      const resp = await saveSocialsRemote(data, pin);
+      if(resp && resp.ok){
+        await renderSocials();
+        alert('Zapisano!');
+      }else{
+        alert('Błąd zapisu (autoryzacja?)');
+      }
+    });
 
-    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[m])); }
-
-    // STATYSTYKI
-    function renderStats(){
-      const d = STATS._load();
-      const rows = Object.entries(d.byKey)
+    // STATYSTYKI – render, reset, export
+    async function renderStats(){
+      const d = await STATS.fetchAll();
+      const rows = Object.entries(d.byKey || {})
         .sort((a,b)=> b[1]-a[1])
         .map(([k,v])=> `<tr><td>${escapeHtml(k)}</td><td>${v}</td></tr>`)
         .join('') || `<tr><td colspan="2" class="muted">Brak danych</td></tr>`;
       statsBody.innerHTML = rows;
-      const date = new Date(d.lastReset);
-      statsMeta.textContent = `Łącznie: ${d.total} • Od: ${isNaN(date)?'—':date.toLocaleString()}`;
+      const date = new Date(d.lastReset || 0);
+      statsMeta.textContent = `Łącznie: ${d.total||0} • Od: ${isNaN(date)?'—':date.toLocaleString()}`;
+      // Eksport (z API nie mamy wszystkich surowych, ale złożymy z odpowiedzi)
+      statsExport.onclick = ()=>{
+        const blob = new Blob([STATS.exportLocal(d)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'stats_clicks.json';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=> URL.revokeObjectURL(url), 500);
+      };
     }
     statsRefresh.addEventListener('click', renderStats);
-    statsReset.addEventListener('click', ()=>{
-      if(confirm('Na pewno zresetować statystyki?')){ STATS.reset(); renderStats(); }
-    });
-    statsExport.addEventListener('click', ()=>{
-      const blob = new Blob([STATS.export()], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'stats_clicks.json';
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(()=> URL.revokeObjectURL(url), 500);
+    statsReset.addEventListener('click', async ()=>{
+      const pin = prompt('Podaj PIN do resetu statystyk:');
+      if(!pin) return;
+      const r = await STATS.reset(pin);
+      if(r && r.ok){ renderStats(); } else { alert('Błąd autoryzacji'); }
     });
 
     // start panelu
     if(isLogged()) showEditor(); else showLogin();
+
+    // Helpers
+    function escapeHtml(s){
+      return String(s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[m]));
+    }
   </script>
 </body>
 </html>
